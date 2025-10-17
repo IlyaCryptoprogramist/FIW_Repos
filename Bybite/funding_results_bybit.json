@@ -1,0 +1,2482 @@
+{
+    "1000FLOKI/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.050843,
+        "168h": 0.198303,
+        "currentFR": 0.009749,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 28145.04,
+        "bidTotalVolume": 21555.29
+    },
+    "1000LUNC/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.276866,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 4617.77,
+        "bidTotalVolume": 4769.89
+    },
+    "1000NEIROCTO/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 28807.48,
+        "bidTotalVolume": 56318.0
+    },
+    "1000PEPE/USDT:USDT": {
+        "24h": 0.007725,
+        "48h": 0.034891,
+        "168h": 0.17732,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 245529.19,
+        "bidTotalVolume": 107848.44
+    },
+    "1INCH/USDT:USDT": {
+        "24h": -0.011531,
+        "48h": 0.011686,
+        "168h": 0.135479,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 22022.55,
+        "bidTotalVolume": 26481.08
+    },
+    "2Z/USDT:USDT": {
+        "24h": -0.003781,
+        "48h": 0.026219,
+        "168h": -0.642488,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 34579.2,
+        "bidTotalVolume": 25576.23
+    },
+    "A/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 17308.89,
+        "bidTotalVolume": 13389.37
+    },
+    "1000XEC/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 10735.09,
+        "bidTotalVolume": 4487.97
+    },
+    "AAVE/USDT:USDT": {
+        "24h": 0.021193,
+        "48h": 0.041926,
+        "168h": 0.118795,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 11598.96,
+        "bidTotalVolume": 9709.53
+    },
+    "ACT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 7006.97,
+        "bidTotalVolume": 4035.36
+    },
+    "ACX/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 6621.25,
+        "bidTotalVolume": 9955.07
+    },
+    "ADA/USDT:USDT": {
+        "24h": 0.016284,
+        "48h": 0.046284,
+        "168h": 0.176293,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 465492.05,
+        "bidTotalVolume": 323864.98
+    },
+    "AERO/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 4858.79,
+        "bidTotalVolume": 3357.72
+    },
+    "AEVO/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 23882.98,
+        "bidTotalVolume": 33341.25
+    },
+    "AI16Z/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 10378.34,
+        "bidTotalVolume": 3978.56
+    },
+    "AKT/USDT:USDT": {
+        "24h": 0.357789,
+        "48h": 0.503488,
+        "168h": 1.16383,
+        "currentFR": 0.016709,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 13622.51,
+        "bidTotalVolume": 24707.77
+    },
+    "ALGO/USDT:USDT": {
+        "24h": 0.02433,
+        "48h": 0.05433,
+        "168h": 0.19771,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 160037.63,
+        "bidTotalVolume": 159868.16
+    },
+    "ALPINE/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.086044,
+        "168h": 0.428358,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 20963.5,
+        "bidTotalVolume": 15684.14
+    },
+    "ALT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 17389.27,
+        "bidTotalVolume": 16648.2
+    },
+    "ANIME/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.0025,
+        "fundingIntervalHours": 2,
+        "nextFundingTime": null,
+        "askTotalVolume": 11287.81,
+        "bidTotalVolume": 40662.61
+    },
+    "ANKR/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.197455,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 3692.76,
+        "bidTotalVolume": 5886.22
+    },
+    "APE/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 16156.32,
+        "bidTotalVolume": 15519.17
+    },
+    "API3/USDT:USDT": {
+        "24h": -3.256857,
+        "48h": -13.929756,
+        "168h": -14.305211,
+        "currentFR": -0.030222,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 10817.5,
+        "bidTotalVolume": 4353.0
+    },
+    "APT/USDT:USDT": {
+        "24h": -0.067272,
+        "48h": -0.162019,
+        "168h": -0.622394,
+        "currentFR": -0.058951,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 72195.35,
+        "bidTotalVolume": 144876.51
+    },
+    "AR/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 7511.87,
+        "bidTotalVolume": 4453.62
+    },
+    "ARB/USDT:USDT": {
+        "24h": 0.019167,
+        "48h": 0.037223,
+        "168h": 0.182579,
+        "currentFR": 0.003679,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 257186.39,
+        "bidTotalVolume": 215894.99
+    },
+    "ARKM/USDT:USDT": {
+        "24h": 0.029473,
+        "48h": 0.059473,
+        "168h": 0.209473,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 7419.02,
+        "bidTotalVolume": 22843.56
+    },
+    "ASP/USDT:USDT": {
+        "24h": -0.292074,
+        "48h": -0.194055,
+        "168h": 0.159135,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 6331.67,
+        "bidTotalVolume": 4774.48
+    },
+    "ASR/USDT:USDT": {
+        "24h": 0.154394,
+        "48h": 0.253886,
+        "168h": 0.574546,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 4940.14,
+        "bidTotalVolume": 4175.59
+    },
+    "ASTER/USDT:USDT": {
+        "24h": 0.054799,
+        "48h": 0.110863,
+        "168h": 0.541641,
+        "currentFR": 0.01582,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 12122.52,
+        "bidTotalVolume": 11729.88
+    },
+    "ASTR/USDT:USDT": {
+        "24h": -0.046927,
+        "48h": -0.514753,
+        "168h": -1.250771,
+        "currentFR": -0.014643,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 20124.97,
+        "bidTotalVolume": 26428.01
+    },
+    "ATH/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 10582.67,
+        "bidTotalVolume": 5330.04
+    },
+    "ATOM/USDT:USDT": {
+        "24h": -0.003745,
+        "48h": 0.026255,
+        "168h": 0.149366,
+        "currentFR": 0.007017,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 118547.9,
+        "bidTotalVolume": 116324.62
+    },
+    "AVAAI/USDT:USDT": {
+        "24h": 0.200885,
+        "48h": 0.325402,
+        "168h": 0.894925,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 5511.55,
+        "bidTotalVolume": 8052.47
+    },
+    "AVAX/USDT:USDT": {
+        "24h": 0.016585,
+        "48h": 0.039912,
+        "168h": 0.114812,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 22843.09,
+        "bidTotalVolume": 13970.89
+    },
+    "AVNT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3678.76,
+        "bidTotalVolume": 4318.77
+    },
+    "AXL/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 6352.51,
+        "bidTotalVolume": 11116.37
+    },
+    "AXS/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.007567,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 33337.81,
+        "bidTotalVolume": 36527.29
+    },
+    "BB/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.047245,
+        "168h": -0.082113,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 14565.15,
+        "bidTotalVolume": 20365.56
+    },
+    "BAT/USDT:USDT": {
+        "24h": 0.022341,
+        "48h": 0.04866,
+        "168h": 0.19866,
+        "currentFR": -0.011337,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 13052.75,
+        "bidTotalVolume": 17101.07
+    },
+    "BCH/USDT:USDT": {
+        "24h": 0.028003,
+        "48h": 0.056653,
+        "168h": 0.137317,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 85806.96,
+        "bidTotalVolume": 105245.74
+    },
+    "BERA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.013728,
+        "168h": 0.021989,
+        "currentFR": 0.0025,
+        "fundingIntervalHours": 2,
+        "nextFundingTime": null,
+        "askTotalVolume": 23907.47,
+        "bidTotalVolume": 33199.71
+    },
+    "BLAST/USDT:USDT": {
+        "24h": -0.017483,
+        "48h": -0.116097,
+        "168h": -0.125163,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 5242.39,
+        "bidTotalVolume": 3977.17
+    },
+    "BIO/USDT:USDT": {
+        "24h": 0.02294,
+        "48h": 0.039201,
+        "168h": -0.423299,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3406.43,
+        "bidTotalVolume": 3084.73
+    },
+    "BLUR/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 6164.59,
+        "bidTotalVolume": 9683.64
+    },
+    "BNB/USDT:USDT": {
+        "24h": -0.045532,
+        "48h": -0.021403,
+        "168h": 0.100202,
+        "currentFR": -0.018102,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 197969.43,
+        "bidTotalVolume": 184690.69
+    },
+    "BOME/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 51255.39,
+        "bidTotalVolume": 77931.24
+    },
+    "BRETT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3148.06,
+        "bidTotalVolume": 11358.05
+    },
+    "BROCCOLI/USDT:USDT": {
+        "24h": 0.167271,
+        "48h": 1.115212,
+        "168h": 2.030733,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3521.86,
+        "bidTotalVolume": 5652.59
+    },
+    "BSV/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": -0.192798,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3764.6,
+        "bidTotalVolume": 8537.08
+    },
+    "BTC/USDT:USDT": {
+        "24h": 0.023109,
+        "48h": 0.040222,
+        "168h": 0.125824,
+        "currentFR": 0.003699,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 329567.79,
+        "bidTotalVolume": 472115.96
+    },
+    "C98/USDT:USDT": {
+        "24h": 0.028458,
+        "48h": 0.04837,
+        "168h": 0.19837,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 3306.73,
+        "bidTotalVolume": 3595.8
+    },
+    "CAKE/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 35521.16,
+        "bidTotalVolume": 23012.0
+    },
+    "CARV/USDT:USDT": {
+        "24h": 0.125931,
+        "48h": 0.238914,
+        "168h": 0.879133,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 4424.57,
+        "bidTotalVolume": 3114.53
+    },
+    "CELO/USDT:USDT": {
+        "24h": -0.014452,
+        "48h": -0.044742,
+        "168h": -0.633162,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 25364.57,
+        "bidTotalVolume": 19880.49
+    },
+    "CHZ/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 16933.06,
+        "bidTotalVolume": 15882.31
+    },
+    "COMP/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.207793,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 9685.35,
+        "bidTotalVolume": 7970.01
+    },
+    "COOKIE/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 19125.47,
+        "bidTotalVolume": 22651.71
+    },
+    "CORE/USDT:USDT": {
+        "24h": 0.020319,
+        "48h": 0.005157,
+        "168h": 0.068404,
+        "currentFR": 0.000214,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 7205.88,
+        "bidTotalVolume": 6326.33
+    },
+    "COS/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 5233.58,
+        "bidTotalVolume": 3033.18
+    },
+    "COW/USDT:USDT": {
+        "24h": 0.043396,
+        "48h": 0.075612,
+        "168h": 0.280128,
+        "currentFR": 0.0025,
+        "fundingIntervalHours": 2,
+        "nextFundingTime": null,
+        "askTotalVolume": 13316.5,
+        "bidTotalVolume": 9549.94
+    },
+    "CRV/USDT:USDT": {
+        "24h": 0.029254,
+        "48h": 0.059254,
+        "168h": 0.152285,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 25768.62,
+        "bidTotalVolume": 29375.26
+    },
+    "CVX/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.148483,
+        "168h": 0.612857,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 10426.68,
+        "bidTotalVolume": 3877.81
+    },
+    "CYBER/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 17154.92,
+        "bidTotalVolume": 14813.0
+    },
+    "DEGEN/USDT:USDT": {
+        "24h": 0.044977,
+        "48h": 0.083666,
+        "168h": 0.233666,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 4984.81,
+        "bidTotalVolume": 5857.33
+    },
+    "DOGE/USDT:USDT": {
+        "24h": 0.016203,
+        "48h": 0.035777,
+        "168h": 0.155384,
+        "currentFR": 0.003708,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 59944.9,
+        "bidTotalVolume": 411646.32
+    },
+    "DOGS/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.208622,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 24062.07,
+        "bidTotalVolume": 32109.18
+    },
+    "DOT/USDT:USDT": {
+        "24h": 0.018792,
+        "48h": 0.045238,
+        "168h": 0.172619,
+        "currentFR": 0.005676,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 3905.05,
+        "bidTotalVolume": 14585.23
+    },
+    "DYDX/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 22620.58,
+        "bidTotalVolume": 12814.47
+    },
+    "EGLD/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 36274.8,
+        "bidTotalVolume": 32197.55
+    },
+    "EDU/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.242562,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 5549.91,
+        "bidTotalVolume": 14617.44
+    },
+    "EDEN/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.1761,
+        "168h": 0.450344,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 4531.08,
+        "bidTotalVolume": 4634.97
+    },
+    "ENA/USDT:USDT": {
+        "24h": 0.003322,
+        "48h": 0.033322,
+        "168h": 0.0869,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 161614.66,
+        "bidTotalVolume": 149582.85
+    },
+    "ENS/USDT:USDT": {
+        "24h": 0.022416,
+        "48h": 0.052416,
+        "168h": 0.185036,
+        "currentFR": 0.000355,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 6197.43,
+        "bidTotalVolume": 4688.21
+    },
+    "ENJ/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.203948,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 4569.05,
+        "bidTotalVolume": 4432.87
+    },
+    "ETC/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.207382,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 20021.97,
+        "bidTotalVolume": 8321.36
+    },
+    "ETHFI/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.200292,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 5582.11,
+        "bidTotalVolume": 3216.58
+    },
+    "F/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 9640.55,
+        "bidTotalVolume": 5970.49
+    },
+    "ETHW/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 17396.16,
+        "bidTotalVolume": 12910.97
+    },
+    "ETH/USDT:USDT": {
+        "24h": 0.0,
+        "48h": 0.0,
+        "168h": 0.0,
+        "currentFR": null,
+        "fundingIntervalHours": null,
+        "nextFundingTime": null,
+        "askTotalVolume": 166734.44,
+        "bidTotalVolume": 8626.37
+    },
+    "FARTCOIN/USDT:USDT": {
+        "24h": 0.055259,
+        "48h": 0.085259,
+        "168h": 0.287601,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 39092.83,
+        "bidTotalVolume": 46136.49
+    },
+    "FF/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.068378,
+        "168h": 0.857223,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 35664.37,
+        "bidTotalVolume": 29620.93
+    },
+    "FIL/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.202241,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 248581.77,
+        "bidTotalVolume": 283880.8
+    },
+    "FLOW/USDT:USDT": {
+        "24h": 0.024076,
+        "48h": 0.048916,
+        "168h": 0.148925,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 5758.68,
+        "bidTotalVolume": 12055.71
+    },
+    "G/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 7320.98,
+        "bidTotalVolume": 4721.09
+    },
+    "GIGA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 4730.29,
+        "bidTotalVolume": 4341.15
+    },
+    "GALA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 386803.09,
+        "bidTotalVolume": 279807.94
+    },
+    "GMT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 24944.35,
+        "bidTotalVolume": 18806.38
+    },
+    "GPS/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3942.67,
+        "bidTotalVolume": 5328.19
+    },
+    "GODS/USDT:USDT": {
+        "24h": -0.556888,
+        "48h": -0.526888,
+        "168h": -0.355063,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 4652.4,
+        "bidTotalVolume": 5071.8
+    },
+    "GRT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 5261.75,
+        "bidTotalVolume": 6615.29
+    },
+    "HBAR/USDT:USDT": {
+        "24h": 0.029859,
+        "48h": 0.054618,
+        "168h": 0.203806,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 39284.43,
+        "bidTotalVolume": 13286.02
+    },
+    "HIVE/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.0025,
+        "fundingIntervalHours": 2,
+        "nextFundingTime": null,
+        "askTotalVolume": 5949.8,
+        "bidTotalVolume": 13437.4
+    },
+    "HOLO/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": -0.36951,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 15156.45,
+        "bidTotalVolume": 10109.26
+    },
+    "HOOK/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 16094.59,
+        "bidTotalVolume": 10926.64
+    },
+    "HOME/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 6618.22,
+        "bidTotalVolume": 6232.37
+    },
+    "HUMA/USDT:USDT": {
+        "24h": 0.002279,
+        "48h": 0.018767,
+        "168h": -0.100184,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 6761.93,
+        "bidTotalVolume": 10711.95
+    },
+    "HYPER/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.027659,
+        "168h": 0.147803,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 17129.28,
+        "bidTotalVolume": 24677.41
+    },
+    "ICP/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.139419,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 48171.93,
+        "bidTotalVolume": 48388.13
+    },
+    "ID/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.202956,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 33428.22,
+        "bidTotalVolume": 58789.08
+    },
+    "ILV/USDT:USDT": {
+        "24h": 0.073224,
+        "48h": 0.103224,
+        "168h": 0.449471,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 17413.04,
+        "bidTotalVolume": 14103.94
+    },
+    "IMX/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.048961,
+        "168h": 0.186184,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3818.44,
+        "bidTotalVolume": 3160.85
+    },
+    "INJ/USDT:USDT": {
+        "24h": 0.025519,
+        "48h": 0.046841,
+        "168h": 0.13958,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 18873.56,
+        "bidTotalVolume": 14817.05
+    },
+    "INIT/USDT:USDT": {
+        "24h": 0.0,
+        "48h": 0.0,
+        "168h": 0.0,
+        "currentFR": 0.005,
+        "fundingIntervalHours": null,
+        "nextFundingTime": null,
+        "askTotalVolume": 8707.97,
+        "bidTotalVolume": 5152.24
+    },
+    "IOST/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 13067.49,
+        "bidTotalVolume": 6190.5
+    },
+    "IOTA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 21335.26,
+        "bidTotalVolume": 25787.67
+    },
+    "IOTX/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.222726,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 5239.34,
+        "bidTotalVolume": 7432.46
+    },
+    "JST/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 11980.26,
+        "bidTotalVolume": 5178.47
+    },
+    "JUP/USDT:USDT": {
+        "24h": 0.023419,
+        "48h": 0.045971,
+        "168h": 0.190243,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 37110.21,
+        "bidTotalVolume": 49176.73
+    },
+    "JOE/USDT:USDT": {
+        "24h": 0.0,
+        "48h": 0.0,
+        "168h": 0.0,
+        "currentFR": 0.01,
+        "fundingIntervalHours": null,
+        "nextFundingTime": null,
+        "askTotalVolume": 3057.83,
+        "bidTotalVolume": 4817.85
+    },
+    "KAVA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 3604.55,
+        "bidTotalVolume": 21983.33
+    },
+    "KAIA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 49817.92,
+        "bidTotalVolume": 34796.37
+    },
+    "KAS/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3427.74,
+        "bidTotalVolume": 9546.0
+    },
+    "KERNEL/USDT:USDT": {
+        "24h": -0.213789,
+        "48h": -0.389191,
+        "168h": -0.420894,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 6063.9,
+        "bidTotalVolume": 7723.47
+    },
+    "KNC/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 17711.66,
+        "bidTotalVolume": 3917.76
+    },
+    "LA/USDT:USDT": {
+        "24h": 0.021025,
+        "48h": 0.034863,
+        "168h": 0.120729,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 6023.99,
+        "bidTotalVolume": 10065.7
+    },
+    "KSM/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 16335.21,
+        "bidTotalVolume": 17769.77
+    },
+    "LDO/USDT:USDT": {
+        "24h": 0.028864,
+        "48h": 0.058864,
+        "168h": 0.15042,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 21349.98,
+        "bidTotalVolume": 14318.95
+    },
+    "LINEA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 67920.02,
+        "bidTotalVolume": 56329.97
+    },
+    "LISTA/USDT:USDT": {
+        "24h": -0.029607,
+        "48h": -0.019904,
+        "168h": 0.130096,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 6972.64,
+        "bidTotalVolume": 4597.21
+    },
+    "LINK/USDT:USDT": {
+        "24h": 0.017889,
+        "48h": 0.037904,
+        "168h": 0.174066,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 46738.93,
+        "bidTotalVolume": 52630.27
+    },
+    "LTC/USDT:USDT": {
+        "24h": 0.028989,
+        "48h": 0.05588,
+        "168h": 0.170539,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 174157.3,
+        "bidTotalVolume": 61445.72
+    },
+    "MAJOR/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 4373.41,
+        "bidTotalVolume": 3838.43
+    },
+    "MAGIC/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.0025,
+        "fundingIntervalHours": 2,
+        "nextFundingTime": null,
+        "askTotalVolume": 26199.98,
+        "bidTotalVolume": 41126.61
+    },
+    "MANA/USDT:USDT": {
+        "24h": 0.025634,
+        "48h": 0.055634,
+        "168h": 0.202967,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 24941.11,
+        "bidTotalVolume": 26861.33
+    },
+    "MANTA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": null,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 12140.07,
+        "bidTotalVolume": 13741.86
+    },
+    "MAVIA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.221758,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 4307.16,
+        "bidTotalVolume": 3247.08
+    },
+    "MASK/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 39657.72,
+        "bidTotalVolume": 59247.29
+    },
+    "MELANIA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.096578,
+        "168h": 0.656632,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 10683.95,
+        "bidTotalVolume": 8391.24
+    },
+    "MEME/USDT:USDT": {
+        "24h": 0.01541,
+        "48h": 0.04541,
+        "168h": 0.17116,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 29188.7,
+        "bidTotalVolume": 37544.08
+    },
+    "METIS/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 12586.17,
+        "bidTotalVolume": 9736.8
+    },
+    "MEW/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 16676.86,
+        "bidTotalVolume": 21995.34
+    },
+    "MINA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.052375,
+        "168h": 0.191866,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 13183.15,
+        "bidTotalVolume": 16460.39
+    },
+    "MIRA/USDT:USDT": {
+        "24h": 0.145106,
+        "48h": 0.175106,
+        "168h": -0.405518,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 11926.7,
+        "bidTotalVolume": 10426.76
+    },
+    "MOVE/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.0025,
+        "fundingIntervalHours": 2,
+        "nextFundingTime": null,
+        "askTotalVolume": 100102.56,
+        "bidTotalVolume": 160934.83
+    },
+    "MUBARAK/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.064563,
+        "168h": 0.214563,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3723.39,
+        "bidTotalVolume": 10140.08
+    },
+    "MYRO/USDT:USDT": {
+        "24h": 0.043369,
+        "48h": 0.11736,
+        "168h": 0.386694,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 5797.26,
+        "bidTotalVolume": 7314.68
+    },
+    "NEO/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 7738.49,
+        "bidTotalVolume": 6148.77
+    },
+    "NEWT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.190222,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 8553.39,
+        "bidTotalVolume": 7108.26
+    },
+    "NOT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 36308.12,
+        "bidTotalVolume": 38811.43
+    },
+    "NXPC/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.185932,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 4806.03,
+        "bidTotalVolume": 4942.79
+    },
+    "OBOL/USDT:USDT": {
+        "24h": 0.127218,
+        "48h": 0.361462,
+        "168h": 0.957214,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 6356.6,
+        "bidTotalVolume": 11140.09
+    },
+    "ONDO/USDT:USDT": {
+        "24h": 0.029576,
+        "48h": 0.0543,
+        "168h": 0.197985,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 107565.84,
+        "bidTotalVolume": 84403.5
+    },
+    "OM/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 64830.23,
+        "bidTotalVolume": 63380.78
+    },
+    "ONG/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.070915,
+        "168h": 0.270579,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 19264.97,
+        "bidTotalVolume": 18470.48
+    },
+    "ONE/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 14519.79,
+        "bidTotalVolume": 14082.41
+    },
+    "ONT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.22803,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 28376.52,
+        "bidTotalVolume": 17301.59
+    },
+    "OP/USDT:USDT": {
+        "24h": 0.029818,
+        "48h": 0.059818,
+        "168h": 0.209818,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 89491.39,
+        "bidTotalVolume": 57162.11
+    },
+    "ORCA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.0025,
+        "fundingIntervalHours": 2,
+        "nextFundingTime": null,
+        "askTotalVolume": 9062.15,
+        "bidTotalVolume": 8475.28
+    },
+    "ORBS/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.224648,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3520.5,
+        "bidTotalVolume": 6097.76
+    },
+    "ORDER/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.055635,
+        "168h": 0.258575,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 10067.77,
+        "bidTotalVolume": 10627.1
+    },
+    "ORDI/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.055172,
+        "168h": 0.205172,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 16528.23,
+        "bidTotalVolume": 23150.81
+    },
+    "PAXG/USDT:USDT": {
+        "24h": -0.01888,
+        "48h": 0.00428,
+        "168h": -0.006733,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3818.81,
+        "bidTotalVolume": 4421.9
+    },
+    "PARTI/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.209209,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 7562.38,
+        "bidTotalVolume": 6138.47
+    },
+    "PEAQ/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.214412,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 3543.59,
+        "bidTotalVolume": 5647.42
+    },
+    "PENGU/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.048123,
+        "168h": 0.198123,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 4753.47,
+        "bidTotalVolume": 3949.37
+    },
+    "PEOPLE/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.053036,
+        "168h": 0.202277,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 35108.4,
+        "bidTotalVolume": 49452.78
+    },
+    "POLYX/USDT:USDT": {
+        "24h": 0.064472,
+        "48h": 0.094472,
+        "168h": 0.263975,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 9059.19,
+        "bidTotalVolume": 7709.99
+    },
+    "POL/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.202876,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 157503.93,
+        "bidTotalVolume": 157862.13
+    },
+    "PNUT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 65798.01,
+        "bidTotalVolume": 106557.65
+    },
+    "POPCAT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.197578,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 72204.9,
+        "bidTotalVolume": 68673.77
+    },
+    "PUFFER/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.201577,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 6736.76,
+        "bidTotalVolume": 7164.33
+    },
+    "POWR/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 4575.2,
+        "bidTotalVolume": 6881.43
+    },
+    "PUMPFUN/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.070873,
+        "168h": 0.220873,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 55835.32,
+        "bidTotalVolume": 87174.69
+    },
+    "PUNDIX/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 5449.64,
+        "bidTotalVolume": 3075.69
+    },
+    "PYTH/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 102634.77,
+        "bidTotalVolume": 88863.4
+    },
+    "QTUM/USDT:USDT": {
+        "24h": -0.597433,
+        "48h": -0.567433,
+        "168h": -0.417433,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 22152.95,
+        "bidTotalVolume": 32372.3
+    },
+    "RDNT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 6460.4,
+        "bidTotalVolume": 3725.66
+    },
+    "RENDER/USDT:USDT": {
+        "24h": -0.019075,
+        "48h": -0.043849,
+        "168h": 0.098468,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 100374.56,
+        "bidTotalVolume": 70297.87
+    },
+    "RESOLV/USDT:USDT": {
+        "24h": -0.009304,
+        "48h": -0.015032,
+        "168h": 0.134968,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 14164.23,
+        "bidTotalVolume": 15018.48
+    },
+    "REZ/USDT:USDT": {
+        "24h": -0.131196,
+        "48h": -0.506947,
+        "168h": -1.660772,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 6932.64,
+        "bidTotalVolume": 17808.1
+    },
+    "ROSE/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 8408.77,
+        "bidTotalVolume": 14634.8
+    },
+    "RUNE/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.208577,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 67240.0,
+        "bidTotalVolume": 92616.31
+    },
+    "RVN/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.061767,
+        "168h": 0.211767,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 33491.86,
+        "bidTotalVolume": 119626.6
+    },
+    "S/USDT:USDT": {
+        "24h": 0.024032,
+        "48h": 0.054032,
+        "168h": 0.204032,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 40105.84,
+        "bidTotalVolume": 61448.13
+    },
+    "SAFE/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.196982,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 4144.35,
+        "bidTotalVolume": 3656.26
+    },
+    "SAGA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 11847.63,
+        "bidTotalVolume": 11595.66
+    },
+    "SAND/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 128492.56,
+        "bidTotalVolume": 73568.06
+    },
+    "SCR/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3651.18,
+        "bidTotalVolume": 4392.97
+    },
+    "SEI/USDT:USDT": {
+        "24h": 0.027823,
+        "48h": 0.057823,
+        "168h": 0.199456,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 211781.37,
+        "bidTotalVolume": 217953.39
+    },
+    "SHELL/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 7787.72,
+        "bidTotalVolume": 12672.39
+    },
+    "SHIB1000/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.181113,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 48312.5,
+        "bidTotalVolume": 51986.96
+    },
+    "SKL/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 11984.31,
+        "bidTotalVolume": 15582.85
+    },
+    "SLP/USDT:USDT": {
+        "24h": 0.050566,
+        "48h": 0.080566,
+        "168h": 0.260537,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 19819.05,
+        "bidTotalVolume": 15593.4
+    },
+    "SNT/USDT:USDT": {
+        "24h": 0.052626,
+        "48h": 0.082626,
+        "168h": 0.232626,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 16721.85,
+        "bidTotalVolume": 6180.91
+    },
+    "SOL/USDT:USDT": {
+        "24h": 0.002193,
+        "48h": 0.032193,
+        "168h": 0.101077,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 712090.15,
+        "bidTotalVolume": 602448.02
+    },
+    "SOLAYER/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 5219.95,
+        "bidTotalVolume": 5924.88
+    },
+    "SOMI/USDT:USDT": {
+        "24h": -0.292191,
+        "48h": -0.810107,
+        "168h": -12.592291,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 15365.59,
+        "bidTotalVolume": 19165.52
+    },
+    "SONIC/USDT:USDT": {
+        "24h": 0.025203,
+        "48h": 0.053711,
+        "168h": 0.203711,
+        "currentFR": 0.0025,
+        "fundingIntervalHours": 2,
+        "nextFundingTime": null,
+        "askTotalVolume": 10160.54,
+        "bidTotalVolume": 14690.05
+    },
+    "SOPH/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 6438.06,
+        "bidTotalVolume": 11101.48
+    },
+    "SPK/USDT:USDT": {
+        "24h": 0.007088,
+        "48h": 0.034037,
+        "168h": 0.175884,
+        "currentFR": -0.019294,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 7776.67,
+        "bidTotalVolume": 8787.66
+    },
+    "STEEM/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 7174.83,
+        "bidTotalVolume": 23345.74
+    },
+    "STG/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 8986.85,
+        "bidTotalVolume": 10084.43
+    },
+    "STORJ/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 32605.12,
+        "bidTotalVolume": 7227.05
+    },
+    "STRK/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 129573.95,
+        "bidTotalVolume": 119316.05
+    },
+    "STX/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 10401.46,
+        "bidTotalVolume": 12525.77
+    },
+    "SUI/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.200735,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 24813.89,
+        "bidTotalVolume": 21544.57
+    },
+    "SUSHI/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.055584,
+        "168h": 0.198708,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 10616.89,
+        "bidTotalVolume": 4117.72
+    },
+    "SWARMS/USDT:USDT": {
+        "24h": 0.2238,
+        "48h": 0.301379,
+        "168h": 1.049964,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 8760.7,
+        "bidTotalVolume": 8468.3
+    },
+    "SUPER/USDT:USDT": {
+        "24h": 0.028502,
+        "48h": 0.011089,
+        "168h": -0.761993,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 6274.92,
+        "bidTotalVolume": 9394.64
+    },
+    "SXP/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.200006,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 3735.77,
+        "bidTotalVolume": 6255.56
+    },
+    "SYN/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.075702,
+        "168h": 0.237443,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 8507.51,
+        "bidTotalVolume": 8516.59
+    },
+    "T/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.0025,
+        "fundingIntervalHours": 2,
+        "nextFundingTime": null,
+        "askTotalVolume": 11052.11,
+        "bidTotalVolume": 7274.4
+    },
+    "TAIKO/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 3690.6,
+        "bidTotalVolume": 6610.53
+    },
+    "THE/USDT:USDT": {
+        "24h": 0.024081,
+        "48h": 0.054081,
+        "168h": 0.204081,
+        "currentFR": 0.002744,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 5891.49,
+        "bidTotalVolume": 4606.33
+    },
+    "TIA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.177213,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 207893.95,
+        "bidTotalVolume": 292557.08
+    },
+    "THETA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.056976,
+        "168h": 0.197354,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 6001.01,
+        "bidTotalVolume": 12426.43
+    },
+    "TNSR/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 73711.29,
+        "bidTotalVolume": 82210.24
+    },
+    "TOKEN/USDT:USDT": {
+        "24h": 0.197552,
+        "48h": 0.362161,
+        "168h": 1.205493,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 8107.41,
+        "bidTotalVolume": 10347.03
+    },
+    "TOWNS/USDT:USDT": {
+        "24h": 0.060258,
+        "48h": 0.102027,
+        "168h": 0.309906,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 4720.42,
+        "bidTotalVolume": 6787.86
+    },
+    "TRB/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.212024,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 31224.23,
+        "bidTotalVolume": 29576.17
+    },
+    "TRUMP/USDT:USDT": {
+        "24h": 0.029662,
+        "48h": 0.059662,
+        "168h": 0.207249,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 58322.2,
+        "bidTotalVolume": 61758.25
+    },
+    "TRX/USDT:USDT": {
+        "24h": 0.008992,
+        "48h": 0.037436,
+        "168h": 0.053478,
+        "currentFR": -0.016942,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 3124.0,
+        "bidTotalVolume": 30685.79
+    },
+    "UMA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 29327.16,
+        "bidTotalVolume": 27416.1
+    },
+    "UNI/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.051885,
+        "168h": 0.130345,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 78589.35,
+        "bidTotalVolume": 69389.08
+    },
+    "USD1/USDT:USDT": {
+        "24h": -0.14434,
+        "48h": -0.313003,
+        "168h": -0.336721,
+        "currentFR": -0.0281,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 31476.14,
+        "bidTotalVolume": 35699.27
+    },
+    "USDE/USDT:USDT": {
+        "24h": 0.024279,
+        "48h": 0.054279,
+        "168h": 0.147541,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 140508.05,
+        "bidTotalVolume": 47865.29
+    },
+    "USDC/USDT:USDT": {
+        "24h": 0.0,
+        "48h": 0.014661,
+        "168h": 0.112813,
+        "currentFR": 0.0,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 630259.28,
+        "bidTotalVolume": 524563.29
+    },
+    "USTC/USDT:USDT": {
+        "24h": 0.036109,
+        "48h": 0.085327,
+        "168h": 0.284029,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 41181.87,
+        "bidTotalVolume": 17650.32
+    },
+    "USELESS/USDT:USDT": {
+        "24h": 0.426741,
+        "48h": 0.496486,
+        "168h": 1.374795,
+        "currentFR": 0.119206,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 10400.12,
+        "bidTotalVolume": 6676.1
+    },
+    "VANA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.0025,
+        "fundingIntervalHours": 2,
+        "nextFundingTime": null,
+        "askTotalVolume": 20761.47,
+        "bidTotalVolume": 3657.99
+    },
+    "USUAL/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.099166,
+        "168h": 0.298362,
+        "currentFR": 0.014369,
+        "fundingIntervalHours": 2,
+        "nextFundingTime": null,
+        "askTotalVolume": 4800.94,
+        "bidTotalVolume": 11277.12
+    },
+    "VANRY/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.2268,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 6466.4,
+        "bidTotalVolume": 4328.85
+    },
+    "VET/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 38866.36,
+        "bidTotalVolume": 41862.81
+    },
+    "VIC/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.093357,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 12337.74,
+        "bidTotalVolume": 11729.54
+    },
+    "VIRTUAL/USDT:USDT": {
+        "24h": 0.021371,
+        "48h": 0.049883,
+        "168h": 0.199883,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 10277.91,
+        "bidTotalVolume": 9853.76
+    },
+    "VTHO/USDT:USDT": {
+        "24h": 0.041177,
+        "48h": 0.071177,
+        "168h": 0.221177,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3364.24,
+        "bidTotalVolume": 4108.36
+    },
+    "W/USDT:USDT": {
+        "24h": 0.004685,
+        "48h": 0.021624,
+        "168h": 0.171624,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3981.41,
+        "bidTotalVolume": 4977.09
+    },
+    "VVV/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06664,
+        "168h": 0.460562,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 8936.56,
+        "bidTotalVolume": 6178.24
+    },
+    "WAL/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.020787,
+        "168h": 0.130594,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 6082.18,
+        "bidTotalVolume": 24682.54
+    },
+    "WCT/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 53943.24,
+        "bidTotalVolume": 22585.88
+    },
+    "WAXP/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 3380.52,
+        "bidTotalVolume": 8517.8
+    },
+    "WLD/USDT:USDT": {
+        "24h": 0.025827,
+        "48h": 0.024292,
+        "168h": 0.068863,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 27016.23,
+        "bidTotalVolume": 14089.59
+    },
+    "WLFI/USDT:USDT": {
+        "24h": 0.01928,
+        "48h": 0.047156,
+        "168h": 0.209976,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 226737.93,
+        "bidTotalVolume": 273603.6
+    },
+    "WIF/USDT:USDT": {
+        "24h": 0.02877,
+        "48h": 0.057242,
+        "168h": 0.201767,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 126831.8,
+        "bidTotalVolume": 65863.58
+    },
+    "XAUT/USDT:USDT": {
+        "24h": -0.01975,
+        "48h": -0.003398,
+        "168h": 0.115558,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 8041.09,
+        "bidTotalVolume": 14797.37
+    },
+    "XRP/USDT:USDT": {
+        "24h": 0.015143,
+        "48h": 0.036137,
+        "168h": 0.186137,
+        "currentFR": 0.005201,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 535713.72,
+        "bidTotalVolume": 197138.02
+    },
+    "XPL/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.064908,
+        "168h": 0.459474,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 49355.76,
+        "bidTotalVolume": 21665.32
+    },
+    "XTZ/USDT:USDT": {
+        "24h": -0.102044,
+        "48h": -0.338259,
+        "168h": -1.00178,
+        "currentFR": 0.00125,
+        "fundingIntervalHours": 1,
+        "nextFundingTime": null,
+        "askTotalVolume": 3673.38,
+        "bidTotalVolume": 7867.32
+    },
+    "YFI/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 4569.68,
+        "bidTotalVolume": 6285.3
+    },
+    "YGG/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 30485.93,
+        "bidTotalVolume": 21167.12
+    },
+    "ZEREBRO/USDT:USDT": {
+        "24h": 0.115804,
+        "48h": 0.218204,
+        "168h": 0.632779,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 9263.54,
+        "bidTotalVolume": 4107.18
+    },
+    "ZETA/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.0025,
+        "fundingIntervalHours": 2,
+        "nextFundingTime": null,
+        "askTotalVolume": 32600.14,
+        "bidTotalVolume": 25723.28
+    },
+    "ZEUS/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.099199,
+        "168h": 0.353095,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 4880.64,
+        "bidTotalVolume": 11597.79
+    },
+    "ZIL/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 43478.77,
+        "bidTotalVolume": 82296.37
+    },
+    "ZK/USDT:USDT": {
+        "24h": 0.016313,
+        "48h": 0.046313,
+        "168h": 0.196313,
+        "currentFR": -0.02625,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 7227.0,
+        "bidTotalVolume": 6216.89
+    },
+    "ZKC/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": -2.62908,
+        "currentFR": 0.005,
+        "fundingIntervalHours": 4,
+        "nextFundingTime": null,
+        "askTotalVolume": 10357.83,
+        "bidTotalVolume": 8449.07
+    },
+    "ZRX/USDT:USDT": {
+        "24h": 0.03,
+        "48h": 0.06,
+        "168h": 0.21,
+        "currentFR": 0.01,
+        "fundingIntervalHours": 8,
+        "nextFundingTime": null,
+        "askTotalVolume": 14587.04,
+        "bidTotalVolume": 9567.6
+    }
+}

@@ -1,0 +1,248 @@
+{
+    "top_10_by_24h": {
+        "LAUNCHCOIN/USDC:USDC": {
+            "24h": 0.267813,
+            "48h": 0.576402,
+            "168h": 1.45937,
+            "currentFR": 0.015568,
+            "askTotalVolume": 3993.4,
+            "bidTotalVolume": 6397.47
+        },
+        "ZRO/USDC:USDC": {
+            "24h": 0.206555,
+            "48h": 0.279583,
+            "168h": 0.685188,
+            "currentFR": 0.007524,
+            "askTotalVolume": 8469.58,
+            "bidTotalVolume": 54758.71
+        },
+        "ENA/USDC:USDC": {
+            "24h": 0.151073,
+            "48h": 0.19763,
+            "168h": 0.419313,
+            "currentFR": 0.003331,
+            "askTotalVolume": 4417.63,
+            "bidTotalVolume": 18795.49
+        },
+        "CHILLGUY/USDC:USDC": {
+            "24h": 0.132586,
+            "48h": 0.257562,
+            "168h": 0.944031,
+            "currentFR": 0.006228,
+            "askTotalVolume": 24003.89,
+            "bidTotalVolume": 4625.76
+        },
+        "ZEC/USDC:USDC": {
+            "24h": 0.130629,
+            "48h": 0.244016,
+            "168h": 0.845522,
+            "currentFR": 0.00125,
+            "askTotalVolume": 3145.57,
+            "bidTotalVolume": 10572.98
+        },
+        "CAKE/USDC:USDC": {
+            "24h": 0.119875,
+            "48h": 0.21185,
+            "168h": 0.808956,
+            "currentFR": 0.006217,
+            "askTotalVolume": 5818.06,
+            "bidTotalVolume": 5969.41
+        },
+        "TST/USDC:USDC": {
+            "24h": 0.101679,
+            "48h": 0.202993,
+            "168h": 1.217324,
+            "currentFR": 0.00125,
+            "askTotalVolume": 5959.0,
+            "bidTotalVolume": 9279.73
+        },
+        "S/USDC:USDC": {
+            "24h": 0.095669,
+            "48h": 0.254483,
+            "168h": 0.415005,
+            "currentFR": 0.001709,
+            "askTotalVolume": 4758.66,
+            "bidTotalVolume": 8201.61
+        },
+        "NIL/USDC:USDC": {
+            "24h": 0.092621,
+            "48h": 0.200821,
+            "168h": 0.803734,
+            "currentFR": 0.007377,
+            "askTotalVolume": 25275.43,
+            "bidTotalVolume": 10740.6
+        },
+        "TAO/USDC:USDC": {
+            "24h": 0.085417,
+            "48h": 0.248604,
+            "168h": 0.479501,
+            "currentFR": 0.002426,
+            "askTotalVolume": 8777.26,
+            "bidTotalVolume": 5952.01
+        }
+    },
+    "top_10_by_48h": {
+        "LAUNCHCOIN/USDC:USDC": {
+            "24h": 0.267813,
+            "48h": 0.576402,
+            "168h": 1.45937,
+            "currentFR": 0.015568,
+            "askTotalVolume": 3993.4,
+            "bidTotalVolume": 6397.47
+        },
+        "ZRO/USDC:USDC": {
+            "24h": 0.206555,
+            "48h": 0.279583,
+            "168h": 0.685188,
+            "currentFR": 0.007524,
+            "askTotalVolume": 8469.58,
+            "bidTotalVolume": 54758.71
+        },
+        "CHILLGUY/USDC:USDC": {
+            "24h": 0.132586,
+            "48h": 0.257562,
+            "168h": 0.944031,
+            "currentFR": 0.006228,
+            "askTotalVolume": 24003.89,
+            "bidTotalVolume": 4625.76
+        },
+        "S/USDC:USDC": {
+            "24h": 0.095669,
+            "48h": 0.254483,
+            "168h": 0.415005,
+            "currentFR": 0.001709,
+            "askTotalVolume": 4758.66,
+            "bidTotalVolume": 8201.61
+        },
+        "TAO/USDC:USDC": {
+            "24h": 0.085417,
+            "48h": 0.248604,
+            "168h": 0.479501,
+            "currentFR": 0.002426,
+            "askTotalVolume": 8777.26,
+            "bidTotalVolume": 5952.01
+        },
+        "ZEC/USDC:USDC": {
+            "24h": 0.130629,
+            "48h": 0.244016,
+            "168h": 0.845522,
+            "currentFR": 0.00125,
+            "askTotalVolume": 3145.57,
+            "bidTotalVolume": 10572.98
+        },
+        "SNX/USDC:USDC": {
+            "24h": 0.05439,
+            "48h": 0.230386,
+            "168h": 0.742666,
+            "currentFR": 0.005618,
+            "askTotalVolume": 4453.71,
+            "bidTotalVolume": 21202.94
+        },
+        "KFLOKI/USDC:USDC": {
+            "24h": 0.076051,
+            "48h": 0.224636,
+            "168h": 0.484264,
+            "currentFR": 0.00125,
+            "askTotalVolume": 3914.77,
+            "bidTotalVolume": 15930.34
+        },
+        "CAKE/USDC:USDC": {
+            "24h": 0.119875,
+            "48h": 0.21185,
+            "168h": 0.808956,
+            "currentFR": 0.006217,
+            "askTotalVolume": 5818.06,
+            "bidTotalVolume": 5969.41
+        },
+        "HEMI/USDC:USDC": {
+            "24h": 0.081943,
+            "48h": 0.207669,
+            "168h": 0.617929,
+            "currentFR": 0.006667,
+            "askTotalVolume": 6399.58,
+            "bidTotalVolume": 4600.67
+        }
+    },
+    "top_10_by_168h": {
+        "LAUNCHCOIN/USDC:USDC": {
+            "24h": 0.267813,
+            "48h": 0.576402,
+            "168h": 1.45937,
+            "currentFR": 0.015568,
+            "askTotalVolume": 3993.4,
+            "bidTotalVolume": 6397.47
+        },
+        "TST/USDC:USDC": {
+            "24h": 0.101679,
+            "48h": 0.202993,
+            "168h": 1.217324,
+            "currentFR": 0.00125,
+            "askTotalVolume": 5959.0,
+            "bidTotalVolume": 9279.73
+        },
+        "CHILLGUY/USDC:USDC": {
+            "24h": 0.132586,
+            "48h": 0.257562,
+            "168h": 0.944031,
+            "currentFR": 0.006228,
+            "askTotalVolume": 24003.89,
+            "bidTotalVolume": 4625.76
+        },
+        "ZEC/USDC:USDC": {
+            "24h": 0.130629,
+            "48h": 0.244016,
+            "168h": 0.845522,
+            "currentFR": 0.00125,
+            "askTotalVolume": 3145.57,
+            "bidTotalVolume": 10572.98
+        },
+        "APEX/USDC:USDC": {
+            "24h": 0.033695,
+            "48h": 0.164032,
+            "168h": 0.845104,
+            "currentFR": 0.00125,
+            "askTotalVolume": 5396.3,
+            "bidTotalVolume": 4545.39
+        },
+        "CAKE/USDC:USDC": {
+            "24h": 0.119875,
+            "48h": 0.21185,
+            "168h": 0.808956,
+            "currentFR": 0.006217,
+            "askTotalVolume": 5818.06,
+            "bidTotalVolume": 5969.41
+        },
+        "NIL/USDC:USDC": {
+            "24h": 0.092621,
+            "48h": 0.200821,
+            "168h": 0.803734,
+            "currentFR": 0.007377,
+            "askTotalVolume": 25275.43,
+            "bidTotalVolume": 10740.6
+        },
+        "MNT/USDC:USDC": {
+            "24h": 0.062556,
+            "48h": 0.142962,
+            "168h": 0.776298,
+            "currentFR": 0.004535,
+            "askTotalVolume": 11141.43,
+            "bidTotalVolume": 26833.18
+        },
+        "SNX/USDC:USDC": {
+            "24h": 0.05439,
+            "48h": 0.230386,
+            "168h": 0.742666,
+            "currentFR": 0.005618,
+            "askTotalVolume": 4453.71,
+            "bidTotalVolume": 21202.94
+        },
+        "XPL/USDC:USDC": {
+            "24h": 0.074259,
+            "48h": 0.195042,
+            "168h": 0.728568,
+            "currentFR": 0.002095,
+            "askTotalVolume": 11732.36,
+            "bidTotalVolume": 5207.69
+        }
+    }
+}
