@@ -1,3 +1,5 @@
+# fetch_hyper_funding.py
+
 import ccxt.async_support as ccxt
 import asyncio
 import json
@@ -90,21 +92,23 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                     full_funding_history = []
 
                 # --- АНАЛИЗ ПОЛУЧЕННОЙ ИСТОРИИ ---
-                total_24h = total_48h = total_168h = 0.0
+                # Добавляем переменную для 30 дней
+                total_24h = total_48h = total_168h = total_720h = 0.0
                 funding_interval_hours = None
 
                 if full_funding_history:
                     # Сортируем по возрастанию времени (для корректной обработки)
                     full_funding_history.sort(key=lambda x: x['timestamp'])
 
-                    # Фильтруем записи, которые находятся В ПРОШЛОМ и в нужном диапазоне
+                    # Фильтруем записи, которые находятся В ПРОШЛОМ и в нужном диапазоне (до 30 дней)
                     now_ms = int(now.timestamp() * 1000)
+                    # Используем timestamps['720h'] как начало 30-дневного периода
                     history_in_range = [
                         entry for entry in full_funding_history
-                        if entry['timestamp'] < now_ms and entry['timestamp'] > timestamps['168h']
+                        if entry['timestamp'] < now_ms and entry['timestamp'] > timestamps['720h'] # Проверяем до 30 дней назад
                     ]
 
-                    print(f"[DEBUG] {symbol}: {len(history_in_range)} записей попало в диапазон за последние 168 часов (до текущего времени).")
+                    print(f"[DEBUG] {symbol}: {len(history_in_range)} записей попало в диапазон за последние 720 часов (до текущего времени).")
 
                     # Если есть прошедшие данные в диапазоне
                     if history_in_range:
@@ -118,6 +122,8 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                                 total_48h += rate
                             if timestamps["168h"] < ts < now_ms:
                                 total_168h += rate
+                            if timestamps["720h"] < ts < now_ms: # Добавляем фильтрацию для 30 дней
+                                total_720h += rate
 
                         # Пытаемся определить интервал на основе *прошедших* данных
                         if len(history_in_range) > 1:
@@ -132,7 +138,7 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                                 funding_interval_hours = funding_interval_hours if funding_interval_hours > 0 else None
                                 print(f"[DEBUG] {symbol}: определён интервал фандинга из истории: {funding_interval_hours}ч")
                     else:
-                        print(f"[DEBUG] {symbol}: в API-истории нет данных за последние 168 часов. Используем текущий FR как приближение.")
+                        print(f"[DEBUG] {symbol}: в API-истории нет данных за последние 720 часов. Используем текущий FR как приближение.")
                         # Если в истории нет прошедших данных, используем текущий FR как приближение
                         # Это может быть не очень точно, но это лучшее, что можно сделать, если API не возвращает прошлые ставки
                         # Часто фандинг на Hyperliquid 1-часовой
@@ -142,16 +148,19 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                         # total_24h = current_funding * 24
                         # total_48h = current_funding * 48
                         # total_168h = current_funding * 168
+                        # total_720h = current_funding * 720 # <- Так было бы для простого усреднения
                         # --- ИЛИ ---
                         # Считаем приближённо: FR * количество_фандингов (округлённое)
                         num_fundings_24h = round(24 / assumed_interval_hours)
                         num_fundings_48h = round(48 / assumed_interval_hours)
                         num_fundings_168h = round(168 / assumed_interval_hours)
+                        num_fundings_720h = round(720 / assumed_interval_hours) # Добавляем для 30 дней
 
                         total_24h = round(current_funding * num_fundings_24h, 6) if current_funding is not None else 0.0
                         total_48h = round(current_funding * num_fundings_48h, 6) if current_funding is not None else 0.0
                         total_168h = round(current_funding * num_fundings_168h, 6) if current_funding is not None else 0.0
-                        print(f"[DEBUG] {symbol}: приближённые суммы (на основе текущего FR): 24h={total_24h}, 48h={total_48h}, 168h={total_168h}")
+                        total_720h = round(current_funding * num_fundings_720h, 6) if current_funding is not None else 0.0 # Добавляем результат
+                        print(f"[DEBUG] {symbol}: приближённые суммы (на основе текущего FR): 24h={total_24h}, 48h={total_48h}, 168h={total_168h}, 720h={total_720h}")
 
                 else:
                     # Если fetch_funding_rate_history не вернул ничего
@@ -161,11 +170,13 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                     num_fundings_24h = round(24 / assumed_interval_hours)
                     num_fundings_48h = round(48 / assumed_interval_hours)
                     num_fundings_168h = round(168 / assumed_interval_hours)
+                    num_fundings_720h = round(720 / assumed_interval_hours) # Добавляем для 30 дней
 
                     total_24h = round(current_funding * num_fundings_24h, 6) if current_funding is not None else 0.0
                     total_48h = round(current_funding * num_fundings_48h, 6) if current_funding is not None else 0.0
                     total_168h = round(current_funding * num_fundings_168h, 6) if current_funding is not None else 0.0
-                    print(f"[DEBUG] {symbol}: приближённые суммы (на основе текущего FR): 24h={total_24h}, 48h={total_48h}, 168h={total_168h}")
+                    total_720h = round(current_funding * num_fundings_720h, 6) if current_funding is not None else 0.0 # Добавляем результат
+                    print(f"[DEBUG] {symbol}: приближённые суммы (на основе текущего FR): 24h={total_24h}, 48h={total_48h}, 168h={total_168h}, 720h={total_720h}")
 
 
                 # Сохраняем данные
@@ -173,6 +184,7 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                     "24h": round(total_24h, 6),
                     "48h": round(total_48h, 6),
                     "168h": round(total_168h, 6),
+                    "720h": round(total_720h, 6), # Добавляем результат за 30 дней
                     "currentFR": round(current_funding, 6) if current_funding is not None else None,
                     "fundingIntervalHours": funding_interval_hours, # Может быть None, если не удалось определить
                     "nextFundingTime": next_funding_time_str,
@@ -194,6 +206,7 @@ async def main():
         "24h": int((now - timedelta(hours=24)).timestamp() * 1000),
         "48h": int((now - timedelta(hours=48)).timestamp() * 1000),
         "168h": int((now - timedelta(hours=168)).timestamp() * 1000),
+        "720h": int((now - timedelta(hours=720)).timestamp() * 1000), # Добавляем метку времени для 30 дней
     }
 
     input_file = f"{DATA_DIR}/tradePairsHyper.json"

@@ -1,0 +1,6 @@
+@echo off
+echo Installing Flask...
+python -m pip install flask
+echo Starting server...
+python app.py
+pause

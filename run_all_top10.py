@@ -15,21 +15,48 @@ async def process_top10_file(file_path):
         with open(file_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        # Предполагаем, что структура файла такая:
+        # Для нового формата файла структура уже содержит все нужные интервалы
         # {
-        #   "top_10_by_24h": {...},
-        #   "top_10_by_48h": {...},
-        #   "top_10_by_168h": {...}
+        #   "1INCH/USDT:USDT": {
+        #     "24h": -0.2763,
+        #     "48h": -0.6167,
+        #     "168h": -0.542,
+        #     "720h": -0.1264,
+        #     ...
+        #   },
+        #   ...
         # }
-        top_24h = data.get("top_10_by_24h", {})
-        top_48h = data.get("top_10_by_48h", {})
-        top_168h = data.get("top_10_by_168h", {})
+
+        # Сортируем данные по каждому интервалу и берем топ-10
+        top_24h = {}
+        top_48h = {}
+        top_168h = {}
+        top_720h = {}
+
+        # Сортировка по каждому интервалу
+        if data:
+            # Сортировка по 24h (по убыванию)
+            sorted_24h = sorted(data.items(), key=lambda item: item[1].get('24h', 0), reverse=True)
+            top_24h = {item[0]: item[1] for item in sorted_24h[:10]}
+
+            # Сортировка по 48h (по убыванию)
+            sorted_48h = sorted(data.items(), key=lambda item: item[1].get('48h', 0), reverse=True)
+            top_48h = {item[0]: item[1] for item in sorted_48h[:10]}
+
+            # Сортировка по 168h (по убыванию)
+            sorted_168h = sorted(data.items(), key=lambda item: item[1].get('168h', 0), reverse=True)
+            top_168h = {item[0]: item[1] for item in sorted_168h[:10]}
+
+            # Сортировка по 720h (по убыванию)
+            sorted_720h = sorted(data.items(), key=lambda item: item[1].get('720h', 0), reverse=True)
+            top_720h = {item[0]: item[1] for item in sorted_720h[:10]}
 
         # Возвращаем данные для этой биржи
         result = {
             "top_10_by_24h": top_24h,
             "top_10_by_48h": top_48h,
-            "top_10_by_168h": top_168h
+            "top_10_by_168h": top_168h,
+            "top_10_by_720h": top_720h
         }
         print(f"[SUCCESS] Файл {file_path} обработан.")
         return exchange_name, result, True
@@ -50,22 +77,23 @@ async def main():
     exchange_dirs = [d for d in base_dir.iterdir() if d.is_dir() and d.name != "common"] # Если есть папка "common", исключим её
 
     # --- ПОИСК И ОБРАБОТКА ФАЙЛОВ ТОП-10 ---
-    # Ищем файлы по шаблону top10_sorted_funding_results_*.json
+    # Ищем файлы, начинающиеся на 'funding_results_'
     json_files_to_process = []
     for exchange_dir in exchange_dirs:
-        # Ищем файл вида top10_sorted_funding_results_{exchange_dir.name.lower()}.json
-        expected_file_name = f"top10_sorted_funding_results_{exchange_dir.name.lower()}.json"
-        file_path = exchange_dir / expected_file_name
-        if file_path.exists() and file_path.is_file():
+        # Ищем файлы вида funding_results_*.json
+        matching_files = list(exchange_dir.glob("funding_results_*.json"))
+        if matching_files:
+            # Берем первый найденный файл, если их несколько
+            file_path = matching_files[0]
             json_files_to_process.append(file_path)
         else:
-            print(f"[WARNING] Файл топ-10 не найден в {exchange_dir} по пути: {file_path}")
+            print(f"[WARNING] Файл, начинающийся на 'funding_results_', не найден в {exchange_dir}")
 
     if not json_files_to_process:
-        print("[WARNING] Не найдено ни одного JSON-файла топ-10 для обработки.")
+        print("[WARNING] Не найдено ни одного JSON-файла, начинающегося на 'funding_results_', для обработки.")
         return
     else:
-        print(f"[INFO] Найдено {len(json_files_to_process)} JSON-файлов топ-10 для обработки.")
+        print(f"[INFO] Найдено {len(json_files_to_process)} JSON-файлов, начинающихся на 'funding_results_', для обработки.")
 
         # Создаём задачи asyncio
         tasks = [process_top10_file(file_path) for file_path in json_files_to_process]
@@ -90,13 +118,14 @@ async def main():
         # Генерируем имя файла с текущей датой и временем
         # Формат: YYYYMMDD_HHMMSS (например, 20251016_123045)
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-        output_file_name = f"top10_all_exchanges_{timestamp}.json"
+        # output_file_name = f"top10_all_exchanges_{timestamp}.json"
+        output_file_name = "result.json"
         output_file_path = base_dir / output_file_name
         
         try:
             with open(output_file_path, "w", encoding="utf-8") as f:
                 json.dump(all_exchange_data, f, indent=4, ensure_ascii=False)
-            print(f"[INFO] Все результаты топ-10 сохранены в: {output_file_path}")
+            print(f"[INFO] Все результаты топ-10 (включая 30 дней) сохранены в: {output_file_path}")
         except Exception as e:
             print(f"[ERROR] Ошибка при сохранении общего файла: {e}")
 

@@ -146,9 +146,9 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                 except Exception as e:
                     print(f"Ошибка текущего FR для {symbol}: {e}")
 
-                # --- НОВАЯ ЛОГИКА: Сбор всей истории за 168 часов ---
-                # Определяем диапазон: от (now - 168 часов) до (now)
-                start_time_ms = int((now - timedelta(hours=168)).timestamp() * 1000)
+                # --- НОВАЯ ЛОГИКА: Сбор всей истории за 720 часов (30 дней) ---
+                # Определяем диапазон: от (now - 720 часов) до (now)
+                start_time_ms_30d = int((now - timedelta(hours=720)).timestamp() * 1000)
                 end_time_ms = int(now.timestamp() * 1000)
 
                 # Ждём между вызовами API
@@ -157,7 +157,7 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                 try:
                     full_funding_history = await fetch_full_funding_history(
                         symbol=symbol,
-                        start_time_ms=start_time_ms,
+                        start_time_ms=start_time_ms_30d, # Используем начало 30-дневного периода
                         end_time_ms=end_time_ms,
                         limit=100  # MEXC обычно возвращает до 1000 записей за раз (лимит API), но 100 - надёжнее
                     )
@@ -166,7 +166,7 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                     return  # прерываем обработку этого символа
 
                 # --- [DEBUG] Выводим информацию о собранной истории ---
-                print(f"[DEBUG] {symbol}: получено {len(full_funding_history)} записей истории FR")
+                print(f"[DEBUG] {symbol}: получено {len(full_funding_history)} записей истории FR за 30 дней")
                 if full_funding_history:
                     latest_ts = max(entry['timestamp'] for entry in full_funding_history)
                     oldest_ts = min(entry['timestamp'] for entry in full_funding_history)
@@ -178,7 +178,7 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                 full_funding_history.sort(key=lambda x: x['timestamp'])
 
                 # Суммируем payout за периоды
-                total_24h = total_48h = total_168h = 0.0
+                total_24h = total_48h = total_168h = total_720h = 0.0 # Добавляем переменную для 30 дней
 
                 for entry in full_funding_history:
                     ts = entry['timestamp']
@@ -190,6 +190,8 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                         total_48h += rate
                     if timestamps["168h"] < ts < end_time_ms:
                         total_168h += rate
+                    if timestamps["720h"] < ts < end_time_ms: # Добавляем фильтрацию для 30 дней (720 часов)
+                        total_720h += rate
 
                 # Определяем интервал выплат на основе собранной истории
                 funding_interval_hours = await detect_funding_interval(full_funding_history)
@@ -199,8 +201,9 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                     "24h": round(total_24h, 6),
                     "48h": round(total_48h, 6),
                     "168h": round(total_168h, 6),
+                    "720h": round(total_720h, 6), # Добавляем результат за 30 дней
                     "currentFR": round(current_funding, 6) if current_funding is not None else None,
-                    "fundingIntervalHours": funding_interval_hours,  # ← 1, 2, 4, 8 и т.д.
+                    "fundingIntervalHours": funding_interval_hours,
                     "nextFundingTime": next_funding_time_str,
                     "askTotalVolume": round(askTotalVolume, 2),
                     "bidTotalVolume": round(bidTotalVolume, 2)
@@ -216,6 +219,7 @@ async def main():
         "24h": int((now - timedelta(hours=24)).timestamp() * 1000),
         "48h": int((now - timedelta(hours=48)).timestamp() * 1000),
         "168h": int((now - timedelta(hours=168)).timestamp() * 1000),
+        "720h": int((now - timedelta(hours=720)).timestamp() * 1000), # Добавляем метку времени для 30 дней
     }
 
     input_file = f"{DATA_DIR}/tradePairsMexc.json"
