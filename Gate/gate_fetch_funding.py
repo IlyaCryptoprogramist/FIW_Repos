@@ -6,9 +6,10 @@ import json
 from datetime import datetime, timedelta
 from collections import Counter
 import time
+from pathlib import Path
 
-# Путь к папке с данными Gate.io
-DATA_DIR = "D:/Ilya/My project/FIW_soft/FIW_soft/Gate"
+# Use relative path based on current file location
+DATA_DIR = Path(__file__).parent
 
 gate = ccxt.gateio({
     'timeout': 30000,
@@ -132,8 +133,8 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                 bidPrice, bidVolume = bids[i][:2]
                 askPrice, askVolume = asks[i][:2]
 
-                askTotalVolume += askPrice * askVolume
-                bidTotalVolume += bidPrice * bidVolume
+                askTotalVolume += askVolume
+                bidTotalVolume += bidVolume
 
             if askTotalVolume > 3000 and bidTotalVolume > 3000:
                 # Ждём между вызовами API
@@ -229,7 +230,7 @@ async def main():
         "720h": int((now - timedelta(hours=720)).timestamp() * 1000), # Добавляем метку времени для 30 дней
     }
 
-    input_file = f"{DATA_DIR}/tradePairsGate.json"
+    input_file = DATA_DIR / "tradePairsGate.json"
     with open(input_file, "r", encoding="utf-8") as f:
         symbols = json.load(f)
 
@@ -237,7 +238,7 @@ async def main():
     tasks = [process_symbol(symbol, timestamps, now, results) for symbol in symbols]
     await asyncio.gather(*tasks)
 
-    output_file = f"{DATA_DIR}/funding_results_gate.json"
+    output_file = DATA_DIR / "funding_results_gate.json"
     try:
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=4, ensure_ascii=False)

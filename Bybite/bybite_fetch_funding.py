@@ -6,9 +6,10 @@ import json
 from datetime import datetime, timedelta
 from collections import Counter
 import time
+from pathlib import Path
 
-# Путь к папке с данными Bybit
-DATA_DIR = "D:/Ilya/My project/FIW_soft/FIW_soft/Bybite"
+# Use relative path based on current file location
+DATA_DIR = Path(__file__).parent
 
 bybit = ccxt.bybit({
     'timeout': 1000,
@@ -116,8 +117,8 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
             bids = order_book['bids'][:5]
             asks = order_book['asks'][:5]
 
-            askTotalVolume = sum(price * volume for price, volume in asks)
-            bidTotalVolume = sum(price * volume for price, volume in bids)
+            askTotalVolume = sum(volume for price, volume in asks)
+            bidTotalVolume = sum(volume for price, volume in bids)
 
             if askTotalVolume > 3000 and bidTotalVolume > 3000:
                 # Ждём между вызовами API
@@ -213,7 +214,7 @@ async def main():
         "720h": int((now - timedelta(hours=720)).timestamp() * 1000), # Добавляем метку времени для 30 дней
     }
 
-    input_file = f"{DATA_DIR}/tradePairsBybite.json"
+    input_file = DATA_DIR / "tradePairsBybite.json"
     with open(input_file, "r", encoding="utf-8") as f:
         symbols = json.load(f)
 
@@ -221,7 +222,7 @@ async def main():
     tasks = [process_symbol(symbol, timestamps, now, results) for symbol in symbols]
     await asyncio.gather(*tasks)
 
-    output_file = f"{DATA_DIR}/funding_results_bybite.json"
+    output_file = DATA_DIR / "funding_results_bybite.json"
     try:
         with open(output_file, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=4, ensure_ascii=False)

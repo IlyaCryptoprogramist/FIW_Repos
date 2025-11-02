@@ -1,7 +1,9 @@
 import ccxt
 import json
+from pathlib import Path
 
-DATA_DIR = "D:/Ilya/My project/FIW_soft/FIW_soft/Bybite"
+# Use relative path based on current file location
+DATA_DIR = Path(__file__).parent
 
 # Создаём экземпляр Bybit
 ex = ccxt.bybit()
@@ -23,7 +25,7 @@ print(f"Найдено {len(perp_symbols)} perpetual-пар с USDT котиро
 print("Примеры:", perp_symbols[:5])
 
 # Сохраняем в файл
-with open(f"{DATA_DIR}/tradePairsBybite.json", "w", encoding="utf-8") as f:
+with open(DATA_DIR / "tradePairsBybite.json", "w", encoding="utf-8") as f:
     json.dump(perp_symbols, f, indent=4, ensure_ascii=False)
 
 print("\nСписок успешно сохранён в tradePairsBybite.json")

@@ -1,6 +1,10 @@
 import ccxt
 import json
-DATA_DIR = "D:/Ilya/My project/FIW_soft/FIW_soft/MexC"
+from pathlib import Path
+
+# Use relative path based on current file location
+DATA_DIR = Path(__file__).parent
+
 # Создаём экземпляр MEXC
 ex = ccxt.mexc()
 
@@ -21,7 +25,7 @@ print(f"Найдено {len(perp_symbols)} perpetual-пар с USDT котиро
 print("Примеры:", perp_symbols[:5])
 
 # Сохраняем в файл
-with open(f"{DATA_DIR}/tradePairsMexc.json", "w", encoding="utf-8") as f:
+with open(DATA_DIR / "tradePairsMexc.json", "w", encoding="utf-8") as f:
     json.dump(perp_symbols, f, indent=4, ensure_ascii=False)
 
 print("\nСписок успешно сохранён в tradePairsMexc.json")

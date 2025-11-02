@@ -1,9 +1,10 @@
 # hyper_getSymbols.py
 import ccxt
 import json
+from pathlib import Path
 
-# Путь к папке с данными Hyperliquid
-DATA_DIR = "D:/Ilya/My project/FIW_soft/FIW_soft/Hyper"
+# Use relative path based on current file location
+DATA_DIR = Path(__file__).parent
 
 # Создаём экземпляр Hyperliquid
 ex = ccxt.hyperliquid({
@@ -28,7 +29,7 @@ print(f"Найдено {len(perp_symbols)} perpetual-контрактов.")
 print("Примеры:", perp_symbols[:5])
 
 # Сохраняем в файл
-output_file_path = f"{DATA_DIR}/tradePairsHyper.json"
+output_file_path = DATA_DIR / "tradePairsHyper.json"
 with open(output_file_path, "w", encoding="utf-8") as f:
     json.dump(perp_symbols, f, indent=4, ensure_ascii=False)
 

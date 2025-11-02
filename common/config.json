@@ -1,0 +1,27 @@
+{
+  "exchange_directories": ["BingX", "Bybite", "Gate", "Htx", "Hyper", "KuCoin", "MexC"],
+  "operations": {
+    "getSymbols": {
+      "file_pattern": "_getSymbols.py",
+      "description": "Fetch trading symbols from exchanges"
+    },
+    "fetch_funding": {
+      "file_pattern": "_fetch_funding.py",
+      "description": "Fetch funding rates from exchanges"
+    },
+    "process_top10": {
+      "file_pattern": "funding_results_*.json",
+      "description": "Process top 10 funding rate data"
+    }
+  },
+  "output_files": {
+    "top10_results": "result.json",
+    "global_top10": "top10_all_exchanges_global_"
+  },
+  "zaloop_config": {
+    "scripts_order": ["run_all_exchanges.py", "run_all_top10.py"],
+    "result_json_path": "result.json",
+    "destination_folder": "D:\\git\\FIW_Repos\\Front\\src\\data",
+    "interval_seconds": 600
+  }
+}
