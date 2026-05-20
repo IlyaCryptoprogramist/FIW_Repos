@@ -2,7 +2,7 @@
 
 import json
 
-DATA_DIR = "D:/Ilya/My project/FIW_soft/FIW_soft/Gate"
+DATA_DIR = "D:\git\FIW_Repos\Gate"
 input_file = f"{DATA_DIR}/funding_results_gate.json"
 
 try:

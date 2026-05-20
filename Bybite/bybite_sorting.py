@@ -2,8 +2,8 @@
 
 import json
 
-DATA_DIR = "D:/Ilya/My project/FIW_soft/FIW_soft/Bybite"
-input_file = f"{DATA_DIR}/funding_results_bybit.json"
+DATA_DIR = "D:\git\FIW_Repos/Bybite"
+input_file = f"{DATA_DIR}/funding_results_bybite.json"
 
 try:
     with open(input_file, "r", encoding="utf-8") as f:

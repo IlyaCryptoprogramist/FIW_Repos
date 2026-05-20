@@ -2,7 +2,7 @@
 
 import json
 
-DATA_DIR = "D:/Ilya/My project/FIW_soft/FIW_soft/Htx"
+DATA_DIR = "D:\git\FIW_Repos\Htx"
 input_file = f"{DATA_DIR}/funding_results_htx.json"
 
 try:

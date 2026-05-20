@@ -1,6 +1,7 @@
 import asyncio
 import sys
 import json
+import subprocess
 from pathlib import Path
 from tqdm.asyncio import tqdm
 
@@ -39,7 +40,7 @@ class UniversalExecutor:
         self.exchange_dirs = [self.base_dir / d for d in self.config["exchange_directories"] if (self.base_dir / d).is_dir()]
     
     async def run_script(self, script_path):
-        """Асинхронно запускает один скрипт."""
+        """Асинхронно запускает один скрипт с таймаутом."""
         print(f"[INFO] Запускаю {script_path}...")
         try:
             # Запускаем скрипт как подпроцесс
@@ -48,7 +49,27 @@ class UniversalExecutor:
                 stdout=asyncio.subprocess.PIPE,
                 stderr=asyncio.subprocess.PIPE
             )
-            stdout, stderr = await process.communicate()
+
+            # --- ДОБАВЛЕН ТАЙМАУТ ---
+            # Устанавливаем таймаут, например, 300 секунд (5 минут).
+            # Вы можете изменить это значение по необходимости.
+            timeout_seconds = 300
+            
+            try:
+                stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout_seconds)
+            except asyncio.TimeoutError:
+                print(f"[TIMEOUT] Процесс {script_path} превысил максимальное время ожидания ({timeout_seconds} сек).")
+                try:
+                    # Попробовать корректно завершить процесс
+                    process.terminate()
+                    # Дождаться завершения (с небольшим таймаутом, чтобы не застрять)
+                    await asyncio.wait_for(process.wait(), timeout=5)
+                    print(f"[INFO] Процесс {script_path} принудительно завершен.")
+                except (asyncio.TimeoutError, ProcessLookupError):
+                    # Процесс не завершился быстро или уже был завершен
+                    print(f"[WARNING] Не удалось дождаться завершения процесса {script_path} после terminate.")
+                return False # Вернуть ошибку таймаута
+            # --- /ТАЙМАУТ ---
 
             if process.returncode == 0:
                 print(f"[SUCCESS] {script_path} завершён.")

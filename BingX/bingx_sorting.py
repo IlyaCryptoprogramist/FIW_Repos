@@ -1,6 +1,6 @@
 import json
 
-DATA_DIR = "D:/Ilya/My project/FIW_soft/FIW_soft/BingX"  # Измените путь при необходимости
+DATA_DIR = "D:\git\FIW_Repos\BingX"  # Измените путь при необходимости
 input_file = f"{DATA_DIR}/funding_results_bingx.json"
 
 try:

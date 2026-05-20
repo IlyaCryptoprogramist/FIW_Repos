@@ -217,3 +217,21 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+`
+# Конфигурационные файлы с секретами
+aster_config.py
+
+# Данные, полученные от API
+funding_data/
+*.json
+!symbols.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.env
+venv/
+ENV/

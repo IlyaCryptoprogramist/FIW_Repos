@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)  # Это заменит ваш @app.after_request код
 
 # Определяем путь к проекту FIW_soft
-BASE_DIR = Path("D:/Ilya/My project/FIW_soft/FIW_soft")
+BASE_DIR = Path("D:\git\FIW_Repos")
 
 # Словарь: имя биржи -> путь к файлу с результатами
 EXCHANGE_DATA_FILES = {

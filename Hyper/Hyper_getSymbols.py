@@ -6,6 +6,7 @@ from pathlib import Path
 # Use relative path based on current file location
 DATA_DIR = Path(__file__).parent
 
+
 # Создаём экземпляр Hyperliquid
 ex = ccxt.hyperliquid({
     'timeout': 30000,  # Увеличиваем таймаут до 30 секунд

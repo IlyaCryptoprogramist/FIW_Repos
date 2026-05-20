@@ -1,9 +1,16 @@
 import asyncio
 import json
+import subprocess
+import sys
 from pathlib import Path
 from datetime import datetime
 from common.executor import UniversalExecutor
 from common.file_utils import save_top10_results
+import urllib3 # <-- Добавлен импорт urllib3
+
+# Отключаем предупреждения urllib3, связанные с SSL (например, InsecureRequestWarning)
+# Это нужно делать один раз при запуске программы.
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 async def run_all_getSymbols():
@@ -67,20 +74,41 @@ def run_global_top10():
         if file_path.exists() and file_path.is_file():
             try:
                 print(f"[INFO] Загружаю данные из {file_path} (биржа: {exchange_name})...")
+                # Попробовать открыть в UTF-8
                 with open(file_path, "r", encoding="utf-8") as f:
                     exchange_data = json.load(f)
                 
-                # Add each symbol from exchange to global list with exchange info
-                for symbol, values in exchange_data.items():
-                    all_data_with_exchange.append({
-                        'symbol': symbol,
-                        'data': values,
-                        'exchange': exchange_name
-                    })
+            except UnicodeDecodeError:
+                # Если UTF-8 не сработал, попробовать автоопределение
+                print(f"[WARNING] UTF-8 не сработал для {file_path}, пробую автоопределение кодировки...")
+                try:
+                    import chardet
+                    raw_data = file_path.read_bytes()
+                    detected_encoding = chardet.detect(raw_data)['encoding']
+                    print(f"[INFO] Обнаружена кодировка для {file_path}: {detected_encoding}")
+                    with open(file_path, "r", encoding=detected_encoding) as f:
+                        exchange_data = json.load(f)
+                except ImportError:
+                    print(f"[ERROR] Не удалось декодировать {file_path}. Установите 'chardet' для автоопределения кодировки.")
+                    continue # Пропустить этот файл
+                except Exception as e:
+                    print(f"[ERROR] Не удалось декодировать {file_path} даже с автоопределением: {e}")
+                    continue # Пропустить этот файл
+            
             except json.JSONDecodeError:
                 print(f"[ERROR] Файл {file_path} повреждён или не является JSON.")
+                continue # Пропустить этот файл
             except Exception as e:
                 print(f"[EXCEPTION] Ошибка при загрузке {file_path}: {e}")
+                continue # Пропустить этот файл
+
+            # Add each symbol from exchange to global list with exchange info
+            for symbol, values in exchange_data.items():
+                all_data_with_exchange.append({
+                    'symbol': symbol,
+                    'data': values,
+                    'exchange': exchange_name
+                })
         else:
             print(f"[WARNING] Файл funding_results не найден в {exchange_dir} по пути: {file_path}")
 
