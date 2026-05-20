@@ -37,13 +37,6 @@ async def wait_for_rate_limit():
 async def analyze_trades_activity(symbol: str, hours_back: int = 1):
     """
     Анализирует активность по сделкам за последний час
-    Возвращает:
-    - total_volume_usd: общий объем в USD
-    - trade_count: количество сделок
-    - avg_trade_size: средний размер сделки
-    - time_since_last_trade: секунд с последней сделки
-    - trades_per_hour: среднее количество сделок в час
-    - is_active: флаг активности
     """
     try:
         since = int((datetime.now() - timedelta(hours=hours_back)).timestamp() * 1000)
@@ -59,16 +52,12 @@ async def analyze_trades_activity(symbol: str, hours_back: int = 1):
                 'is_active': False
             }
         
-        # Суммируем объем
         total_volume_usd = sum(trade['cost'] for trade in trades)
         trade_count = len(trades)
         avg_trade_size = total_volume_usd / trade_count if trade_count > 0 else 0
         
-        # Время с последней сделки (в секундах)
         latest_trade_time = max(trade['timestamp'] for trade in trades)
         time_since_last_trade = (datetime.now().timestamp() * 1000 - latest_trade_time) / 1000
-        
-        # Сделок в час
         trades_per_hour = trade_count / hours_back
         
         return {
@@ -94,7 +83,7 @@ async def analyze_trades_activity(symbol: str, hours_back: int = 1):
 
 async def fetch_ticker_info(symbol: str):
     """
-    Получает информацию из ticker (быстрый метод)
+    Получает информацию из ticker
     """
     try:
         ticker = await bybit.fetch_ticker(symbol)
@@ -175,14 +164,14 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
         try:
             await wait_for_rate_limit()
             
-            # ========== 1. ПОЛУЧАЕМ TICKER (объем за 24ч) ==========
+            # ========== 1. ПОЛУЧАЕМ TICKER ==========
             ticker_info = await fetch_ticker_info(symbol)
             volume_24h_usd = ticker_info['volume_24h_usd']
             
-            # ========== 2. АНАЛИЗИРУЕМ СДЕЛКИ ЗА ПОСЛЕДНИЙ ЧАС ==========
+            # ========== 2. АНАЛИЗИРУЕМ СДЕЛКИ ==========
             trades_info = await analyze_trades_activity(symbol, hours_back=1)
             
-            # ========== 3. ПРИМЕНЯЕМ ВСЕ ФИЛЬТРЫ ==========
+            # ========== 3. ПРИМЕНЯЕМ ФИЛЬТРЫ ==========
             filters_passed = {
                 'min_volume_24h': volume_24h_usd >= min_volume_24h_usd,
                 'min_trade_count': trades_info['trade_count'] >= min_trade_count_per_hour,
@@ -193,42 +182,24 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
             
             is_liquid = all(filters_passed.values())
             
-            # Детальное логирование для всех монет (чтобы видеть, почему отфильтровались)
-            if True:  # Логируем все монеты для отладки
-                print(f"\n🔍 {symbol}:")
-                print(f"   📊 ОБЪЕМ ЗА 24ч: ${volume_24h_usd:,.2f} (нужно >{min_volume_24h_usd:,.0f}$) {'✅' if filters_passed['min_volume_24h'] else '❌'}")
-                print(f"   📈 СДЕЛКИ ЗА ЧАС: {trades_info['trade_count']} (нужно >{min_trade_count_per_hour}) {'✅' if filters_passed['min_trade_count'] else '❌'}")
-                if trades_info['time_since_last_trade']:
-                    print(f"   ⏱️ ПОСЛЕДНЯЯ СДЕЛКА: {trades_info['time_since_last_trade']:.1f} сек назад (нужно <{max_time_since_last_trade_seconds} сек) {'✅' if filters_passed['recent_trades'] else '❌'}")
-                else:
-                    print(f"   ⏱️ ПОСЛЕДНЯЯ СДЕЛКА: НЕТ СДЕЛОК ❌")
-                print(f"   💰 СРЕДНИЙ ЧЕК: ${trades_info['avg_trade_size']:,.2f} (нужно >{min_avg_trade_size_usd:,.0f}$) {'✅' if filters_passed['min_avg_trade_size'] else '❌'}")
-                print(f"   🎯 ИТОГ: {'✅ ПРОХОДИТ ФИЛЬТР' if is_liquid else '❌ НЕ ПРОХОДИТ ФИЛЬТР'}")
+            # Детальное логирование
+            print(f"\n🔍 {symbol}:")
+            print(f"   📊 Объем 24ч: ${volume_24h_usd:,.2f} (нужно >{min_volume_24h_usd:,.0f}$) {'✅' if filters_passed['min_volume_24h'] else '❌'}")
+            print(f"   📈 Сделок/час: {trades_info['trade_count']} (нужно >{min_trade_count_per_hour}) {'✅' if filters_passed['min_trade_count'] else '❌'}")
+            if trades_info['time_since_last_trade']:
+                print(f"   ⏱️ Последняя сделка: {trades_info['time_since_last_trade']:.1f} сек (нужно <{max_time_since_last_trade_seconds} сек) {'✅' if filters_passed['recent_trades'] else '❌'}")
+            else:
+                print(f"   ⏱️ Последняя сделка: НЕТ СДЕЛОК ❌")
+            print(f"   💰 Средний чек: ${trades_info['avg_trade_size']:,.2f} (нужно >{min_avg_trade_size_usd:,.0f}$) {'✅' if filters_passed['min_avg_trade_size'] else '❌'}")
             
+            # ========== 4. ЕСЛИ НЕ ПРОШЕЛ ФИЛЬТР - ПРОСТО ПРОПУСКАЕМ ==========
             if not is_liquid:
-                # Сохраняем информацию об отфильтрованной монете
-                results[symbol] = {
-                    "24h": 0,
-                    "48h": 0,
-                    "168h": 0,
-                    "720h": 0,
-                    "currentFR": None,
-                    "fundingIntervalHours": None,
-                    "nextFundingTime": None,
-                    "volume24hUSD": round(volume_24h_usd, 2),
-                    "tradeCountLastHour": trades_info['trade_count'],
-                    "avgTradeSizeUSD": round(trades_info['avg_trade_size'], 2),
-                    "timeSinceLastTradeSeconds": round(trades_info['time_since_last_trade'], 1) if trades_info['time_since_last_trade'] else None,
-                    "tradesPerHour": round(trades_info['trades_per_hour'], 2),
-                    "is_liquid": False,
-                    "filters_passed": filters_passed,
-                    "filter_reason": f"Vol24h={volume_24h_usd:,.0f}$, Trades/h={trades_info['trade_count']}, LastTrade={trades_info['time_since_last_trade']:.0f}s, AvgSize={trades_info['avg_trade_size']:.0f}$"
-                }
+                print(f"   ❌ НЕ ПРОХОДИТ ФИЛЬТР - монета НЕ будет сохранена")
                 return
             
-            print(f"✅ [LIQUID] {symbol}: Объем=${volume_24h_usd:,.0f}$, Сделок/час={trades_info['trade_count']}, Свежесть={trades_info['time_since_last_trade']:.0f}с")
+            # ========== 5. ПРОШЕЛ ФИЛЬТР - СОБИРАЕМ ДАННЫЕ ==========
+            print(f"   ✅ ПРОХОДИТ ФИЛЬТР - собираем данные по фандингу")
             
-            # ========== 4. СБОР ДАННЫХ ПО ФАНДИНГУ ==========
             # Текущий funding rate
             current_funding = None
             next_funding_time_str = None
@@ -241,7 +212,7 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                 if current_funding is not None:
                     current_funding *= 100
             except Exception as e:
-                print(f"Ошибка текущего FR для {symbol}: {e}")
+                print(f"   Ошибка текущего FR: {e}")
 
             # Сбор истории за 720 часов (30 дней)
             start_time_ms_30d = int((now - timedelta(hours=720)).timestamp() * 1000)
@@ -257,7 +228,7 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                     limit=200
                 )
             except Exception as e:
-                print(f"Ошибка получения полной истории FR для {symbol}: {e}")
+                print(f"   Ошибка получения истории FR: {e}")
                 full_funding_history = []
 
             # Сортировка и фильтрация по периодам
@@ -280,7 +251,7 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
 
             funding_interval_hours = await detect_funding_interval(full_funding_history)
 
-            # Сохраняем полные данные
+            # ========== 6. СОХРАНЯЕМ ТОЛЬКО ЛИКВИДНЫЕ МОНЕТЫ ==========
             results[symbol] = {
                 "24h": round(total_24h, 6),
                 "48h": round(total_48h, 6),
@@ -294,30 +265,13 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                 "avgTradeSizeUSD": round(trades_info['avg_trade_size'], 2),
                 "timeSinceLastTradeSeconds": round(trades_info['time_since_last_trade'], 1) if trades_info['time_since_last_trade'] else None,
                 "tradesPerHour": round(trades_info['trades_per_hour'], 2),
-                "is_liquid": True,
                 "total_records": len(full_funding_history)
             }
 
             print(f"   → 30д={total_720h:.4f}%, 7д={total_168h:.4f}%, записей={len(full_funding_history)}")
 
         except Exception as e:
-            print(f"❌ Ошибка при обработке {symbol} на Bybit: {e}")
-            results[symbol] = {
-                "24h": 0,
-                "48h": 0,
-                "168h": 0,
-                "720h": 0,
-                "currentFR": None,
-                "fundingIntervalHours": None,
-                "nextFundingTime": None,
-                "volume24hUSD": 0,
-                "tradeCountLastHour": 0,
-                "avgTradeSizeUSD": 0,
-                "timeSinceLastTradeSeconds": None,
-                "tradesPerHour": 0,
-                "is_liquid": False,
-                "error": str(e)
-            }
+            print(f"❌ Ошибка при обработке {symbol}: {e}")
 
 
 async def main():
@@ -333,12 +287,12 @@ async def main():
     with open(input_file, "r", encoding="utf-8") as f:
         symbols = json.load(f)
 
-    # ========== НАСТРОЙКИ ФИЛЬТРАЦИИ (НОВЫЕ!) ==========
+    # ========== НАСТРОЙКИ ФИЛЬТРАЦИИ ==========
     FILTERS = {
         'min_volume_24h_usd': 500000,              # Минимальный объем за 24ч: 500,000$
         'min_trade_count_per_hour': 100,           # Минимум сделок за час: 100
-        'max_time_since_last_trade_seconds': 25,   # С последней сделки не более 10 секунд
-        'min_avg_trade_size_usd': 10             # Минимальный средний размер сделки: 100$
+        'max_time_since_last_trade_seconds': 10,   # С последней сделки не более 10 секунд
+        'min_avg_trade_size_usd': 100              # Минимальный средний размер сделки: 100$
     }
 
     print(f"\n{'='*80}")
@@ -349,6 +303,8 @@ async def main():
     print(f"   • Количество сделок за час: > {FILTERS['min_trade_count_per_hour']}")
     print(f"   • Свежесть последней сделки: < {FILTERS['max_time_since_last_trade_seconds']} секунд")
     print(f"   • Средний размер сделки: > ${FILTERS['min_avg_trade_size_usd']:,.0f}")
+    print(f"{'='*80}")
+    print(f"⚠️ ВНИМАНИЕ: В файл попадут ТОЛЬКО монеты, прошедшие ВСЕ фильтры!")
     print(f"{'='*80}\n")
 
     results = {}
@@ -366,34 +322,15 @@ async def main():
             json.dump(results, f, indent=4, ensure_ascii=False)
         
         # Статистика
-        total = len(results)
-        liquid = sum(1 for r in results.values() if r.get('is_liquid', False))
+        total_checked = len(symbols)
+        liquid_count = len(results)
         
         print(f"\n{'='*80}")
         print(f"✅ Результаты Bybit сохранены в: {output_file}")
         print(f"📊 ИТОГОВАЯ СТАТИСТИКА:")
-        print(f"   Всего символов: {total}")
-        print(f"   Ликвидных (прошли ВСЕ фильтры): {liquid} ({liquid/total*100:.1f}%)")
-        print(f"   Неликвидных (не прошли фильтры): {total - liquid} ({(total-liquid)/total*100:.1f}%)")
-        
-        # Анализ причин отфильтровки
-        filtered = [(sym, r) for sym, r in results.items() if not r.get('is_liquid', False)]
-        if filtered:
-            print(f"\n📋 ПРИМЕРЫ ОТФИЛЬТРОВАННЫХ СИМВОЛОВ (первые 10):")
-            for sym, data in filtered[:10]:
-                reason = data.get('filter_reason', 'Unknown')
-                print(f"   {sym:<30} → {reason}")
-        
-        # Показываем ТОП-10 самых активных символов
-        liquid_symbols = [(sym, r) for sym, r in results.items() if r.get('is_liquid', False)]
-        if liquid_symbols:
-            top_by_volume = sorted(liquid_symbols, key=lambda x: x[1].get('volume24hUSD', 0), reverse=True)[:10]
-            print(f"\n🏆 ТОП-10 ПО ОБЪЕМУ ТОРГОВ ЗА 24ч (только ликвидные):")
-            for sym, data in top_by_volume:
-                volume = data.get('volume24hUSD', 0)
-                trades = data.get('tradeCountLastHour', 0)
-                freshness = data.get('timeSinceLastTradeSeconds', 0)
-                print(f"   {sym:<30} ${volume:>12,.0f} | сделок/ч: {trades:>3} | свежесть: {freshness:>4.0f}с")
+        print(f"   Проверено монет: {total_checked}")
+        print(f"   Прошли фильтры и сохранены: {liquid_count} ({liquid_count/total_checked*100:.1f}%)")
+        print(f"   Отфильтровано (НЕ сохранены): {total_checked - liquid_count} ({(total_checked-liquid_count)/total_checked*100:.1f}%)")
         
         print(f"{'='*80}")
         
