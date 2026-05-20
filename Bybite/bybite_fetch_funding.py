@@ -158,7 +158,7 @@ async def detect_funding_interval(history):
 async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: dict, 
                          min_volume_24h_usd: float = 500000,
                          min_trade_count_per_hour: int = 100,
-                         max_time_since_last_trade_seconds: int = 10,
+                         max_time_since_last_trade_seconds: int = 25,
                          min_avg_trade_size_usd: float = 100):
     async with semaphore:
         try:
@@ -291,8 +291,8 @@ async def main():
     FILTERS = {
         'min_volume_24h_usd': 500000,              # Минимальный объем за 24ч: 500,000$
         'min_trade_count_per_hour': 100,           # Минимум сделок за час: 100
-        'max_time_since_last_trade_seconds': 10,   # С последней сделки не более 10 секунд
-        'min_avg_trade_size_usd': 100              # Минимальный средний размер сделки: 100$
+        'max_time_since_last_trade_seconds': 25,   # С последней сделки не более 10 секунд
+        'min_avg_trade_size_usd': 10              # Минимальный средний размер сделки: 100$
     }
 
     print(f"\n{'='*80}")
