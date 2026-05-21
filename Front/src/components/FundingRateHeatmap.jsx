@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const API_BASE_URL = 'http://localhost:5000/api';
@@ -10,6 +10,10 @@ const FundingRateHeatmap = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sortConfig, setSortConfig] = useState({ exchange: null, direction: null });
+  const [firstColumnWidth, setFirstColumnWidth] = useState(120);
+  const [isResizing, setIsResizing] = useState(false);
+  const startXRef = useRef(0);
+  const startWidthRef = useRef(0);
 
   const periods = [
     { key: 'currentFR', label: 'Current', dataKey: 'currentFR' },
@@ -23,6 +27,29 @@ const FundingRateHeatmap = () => {
   useEffect(() => {
     fetchFundingData();
   }, []);
+
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (!isResizing) return;
+      const delta = e.clientX - startXRef.current;
+      const newWidth = startWidthRef.current + delta;
+      if (newWidth >= 50) setFirstColumnWidth(newWidth);
+    };
+    const handleMouseUp = () => setIsResizing(false);
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
+
+  const handleResizeStart = (e) => {
+    e.preventDefault();
+    startXRef.current = e.clientX;
+    startWidthRef.current = firstColumnWidth;
+    setIsResizing(true);
+  };
 
   const fetchFundingData = async () => {
     setLoading(true);
@@ -78,18 +105,15 @@ const FundingRateHeatmap = () => {
     return `${value.toFixed(5)}%`;
   };
 
-  const getBackgroundColor = (value) => {
-    if (value === null || value === undefined) return '#f8f9fa';
-    const intensity = Math.min(Math.abs(value) * 10, 0.8);
-    if (value > 0) {
-      const g = 180 + Math.floor(75 * (1 - intensity));
-      return `rgb(144, ${g}, 144)`;
-    } else if (value < 0) {
-      const r = 180 + Math.floor(75 * (1 - intensity));
-      return `rgb(${r}, 144, 144)`;
-    }
-    return '#ffffff';
+  // Новые функции для цветов
+  const getTextColor = (value) => {
+    if (value === null || value === undefined) return '#6c757d'; // серый для отсутствующих данных
+    if (value > 0) return '#28a745'; // зелёный для положительных
+    if (value < 0) return '#dc3545'; // красный для отрицательных
+    return '#212529'; // чёрный для нуля
   };
+
+  const getBackgroundColor = () => '#ffffff'; // всегда белый фон
 
   const getSortIcon = (exchange) => {
     if (sortConfig.exchange !== exchange) return ' ↕️';
@@ -133,7 +157,21 @@ const FundingRateHeatmap = () => {
         <table className="table table-bordered table-hover text-center align-middle">
           <thead className="table-dark">
             <tr>
-              <th>Symbol</th>
+              <th style={{ width: `${firstColumnWidth}px`, position: 'relative' }}>
+                Symbol
+                <div
+                  style={{
+                    position: 'absolute',
+                    right: 0,
+                    top: 0,
+                    width: '5px',
+                    height: '100%',
+                    cursor: 'col-resize',
+                    userSelect: 'none',
+                  }}
+                  onMouseDown={handleResizeStart}
+                />
+              </th>
               {exchangeList.map(ex => (
                 <th
                   key={ex}
@@ -150,13 +188,16 @@ const FundingRateHeatmap = () => {
           <tbody>
             {sortedSymbols.map(coin => (
               <tr key={coin}>
-                <td className="fw-bold">{coin}</td>
+                <td style={{ width: `${firstColumnWidth}px` }} className="fw-bold">{coin}</td>
                 {exchangeList.map(ex => {
                   const value = getValue(coin, ex);
                   return (
                     <td
                       key={`${coin}-${ex}`}
-                      style={{ backgroundColor: getBackgroundColor(value) }}
+                      style={{
+                        backgroundColor: getBackgroundColor(),
+                        color: getTextColor(value),
+                      }}
                     >
                       {formatWithPercent(value)}
                     </td>

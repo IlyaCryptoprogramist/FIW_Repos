@@ -1,362 +1,335 @@
+# aster_fetch_funding.py
+import asyncio
+import aiohttp
 import json
 from datetime import datetime, timedelta
-from collections import defaultdict
-from pathlib import Path
+from typing import List, Dict, Any
 import os
-
-# Используем относительный путь
-DATA_DIR = Path(__file__).parent
-FUNDING_DATA_DIR = DATA_DIR / "funding_data"
+from aster_config import ASTER_CONFIG
 
 
-def load_all_funding_data():
-    """Загружает все данные из all_funding_data.json"""
-    input_file = FUNDING_DATA_DIR / "all_funding_data.json"
-    
-    if not input_file.exists():
-        print(f"❌ Файл {input_file} не найден!")
-        print("Сначала запустите aster_fetch_funding.py для сбора данных")
-        return None
-    
-    with open(input_file, 'r', encoding='utf-8') as f:
-        data = json.load(f)
-    
-    print(f"✅ Загружены данные для {len(data)} символов")
-    return data
+class AsterFundingCollector:
+    def __init__(self, symbols_file: str = "tradePairsAster.json", output_dir: str = "funding_data"):
+        self.config = ASTER_CONFIG
+        self.symbols = self.load_symbols(symbols_file)
+        self.output_dir = output_dir
+        self.base_url = self.config["base_url"]
+        self.funding_endpoint = self.config["endpoints"]["funding_rate_history"]
+        self.ticker_endpoint = self.config["endpoints"]["ticker_24hr"]
+        self.headers = self.config["headers"]
+        self.source_code = self.config["source_code"]
+        self.semaphore = asyncio.Semaphore(10)
 
+        os.makedirs(output_dir, exist_ok=True)
 
-def calculate_funding_summary(funding_data, timestamps, end_time_ms):
-    """
-    Рассчитывает суммарный фандинг за периоды
-    funding_data: список записей с полями calcTime (timestamp) и lastFundingRate
-    """
-    total_24h = 0.0
-    total_48h = 0.0
-    total_168h = 0.0
-    total_720h = 0.0
-    
-    for record in funding_data:
-        calc_time = record.get('calcTime')
-        if not calc_time:
-            continue
-        
-        # Конвертируем fundingRate из строки в число
+    def load_symbols(self, symbols_file: str) -> List[str]:
+        with open(symbols_file, 'r', encoding='utf-8') as f:
+            symbols = json.load(f)
+        if not symbols:
+            raise ValueError(f"Файл {symbols_file} пуст")
+        print(f"✅ Загружено {len(symbols)} символов")
+        return symbols
+
+    async def fetch_all_tickers(self, session: aiohttp.ClientSession) -> Dict[str, Dict]:
+        url = self.base_url + self.ticker_endpoint
         try:
-            funding_rate = float(record.get('lastFundingRate', '0'))
-        except (ValueError, TypeError):
-            continue
-        
-        if timestamps["24h"] < calc_time < end_time_ms:
-            total_24h += funding_rate
-        if timestamps["48h"] < calc_time < end_time_ms:
-            total_48h += funding_rate
-        if timestamps["168h"] < calc_time < end_time_ms:
-            total_168h += funding_rate
-        if timestamps["720h"] < calc_time < end_time_ms:
-            total_720h += funding_rate
-    
-    return {
-        "24h": round(total_24h, 6),
-        "48h": round(total_48h, 6),
-        "168h": round(total_168h, 6),
-        "720h": round(total_720h, 6)
-    }
+            async with session.get(url, headers=self.headers, timeout=30) as resp:
+                if resp.status == 200:
+                    data = await resp.json()
+                    if isinstance(data, list):
+                        return {item['symbol']: item for item in data}
+                    elif isinstance(data, dict) and 'data' in data and isinstance(data['data'], list):
+                        return {item['symbol']: item for item in data['data']}
+                    else:
+                        print("⚠️ Неизвестный формат ответа тикеров")
+                        return {}
+                else:
+                    print(f"❌ Ошибка получения тикеров: HTTP {resp.status}")
+                    return {}
+        except Exception as e:
+            print(f"❌ Ошибка получения тикеров: {e}")
+            return {}
 
+    async def get_funding_history(self, session: aiohttp.ClientSession, symbol: str, rows: int = 336) -> Dict[str, Any]:
+        url = self.base_url + self.funding_endpoint
+        payload = {
+            "symbol": symbol,
+            "page": 1,
+            "rows": rows,
+            "sourceCode": self.source_code
+        }
+        async with self.semaphore:
+            try:
+                async with session.post(url, headers=self.headers, json=payload, timeout=30) as resp:
+                    if resp.status == 200:
+                        data = await resp.json()
+                        if data.get("code") == "000000" and "data" in data:
+                            funding_data = data["data"]
+                            filtered = self.filter_last_30_days(funding_data)
+                            return {
+                                "symbol": symbol,
+                                "success": True,
+                                "total_records": len(funding_data),
+                                "filtered_records": len(filtered),
+                                "data": filtered,
+                                "last_update": datetime.now().isoformat()
+                            }
+                        else:
+                            return {"symbol": symbol, "success": False, "error": f"API error: {data.get('message')}"}
+                    else:
+                        return {"symbol": symbol, "success": False, "error": f"HTTP {resp.status}"}
+            except Exception as e:
+                return {"symbol": symbol, "success": False, "error": str(e)}
 
-def detect_funding_interval(funding_data):
-    """
-    Определяет интервал выплаты funding rate в часах на основе данных
-    """
-    if len(funding_data) < 2:
-        return None
-    
-    # Сортируем по времени
-    sorted_data = sorted(funding_data, key=lambda x: x.get('calcTime', 0))
-    
-    # Считаем интервалы между выплатами (в миллисекундах)
-    intervals_ms = []
-    for i in range(1, len(sorted_data)):
-        time_diff = sorted_data[i]['calcTime'] - sorted_data[i-1]['calcTime']
-        if time_diff > 0:
-            intervals_ms.append(time_diff)
-    
-    if not intervals_ms:
-        return None
-    
-    # Находим медианный интервал
-    intervals_ms.sort()
-    median_interval = intervals_ms[len(intervals_ms) // 2]
-    
-    # Переводим в часы
-    hours = round(median_interval / (1000 * 3600))
-    
-    if 1 <= hours <= 24:
-        return hours
-    else:
-        # Проверяем fundingIntervalHours из данных
-        if funding_data and 'fundingIntervalHours' in funding_data[0]:
-            return funding_data[0].get('fundingIntervalHours')
-        return 8  # По умолчанию 8 часов для Aster
+    def filter_last_30_days(self, data: List[Dict]) -> List[Dict]:
+        if not data:
+            return []
+        thirty_days_ago = datetime.now() - timedelta(days=30)
+        filtered = []
+        for record in data:
+            calc_time = record.get('calcTime')
+            if calc_time:
+                try:
+                    record_date = datetime.fromtimestamp(calc_time / 1000)
+                    if record_date >= thirty_days_ago:
+                        record['calcTimeReadable'] = record_date.isoformat()
+                        filtered.append(record)
+                except Exception:
+                    filtered.append(record)
+            else:
+                filtered.append(record)
+        return filtered
 
+    def detect_funding_interval(self, funding_data: List[Dict]) -> int:
+        if len(funding_data) < 2:
+            return 8
+        sorted_data = sorted(funding_data, key=lambda x: x.get('calcTime', 0))
+        intervals = []
+        for i in range(1, len(sorted_data)):
+            diff = sorted_data[i]['calcTime'] - sorted_data[i-1]['calcTime']
+            if diff > 0:
+                intervals.append(diff)
+        if not intervals:
+            return 8
+        intervals.sort()
+        median = intervals[len(intervals)//2]
+        hours = round(median / (1000 * 3600))
+        return hours if 1 <= hours <= 24 else 8
 
-def get_current_funding_rate(funding_data):
-    """Получает последнюю известную ставку фандинга"""
-    if not funding_data:
-        return None
-    
-    # Сортируем по времени и берем последнюю запись
-    sorted_data = sorted(funding_data, key=lambda x: x.get('calcTime', 0), reverse=True)
-    latest_rate = sorted_data[0].get('lastFundingRate')
-    
-    if latest_rate:
-        try:
-            return round(float(latest_rate), 6)
-        except (ValueError, TypeError):
+    def get_next_funding_time(self, funding_data: List[Dict]) -> str:
+        if not funding_data:
             return None
-    return None
+        interval_hours = self.detect_funding_interval(funding_data)
+        sorted_data = sorted(funding_data, key=lambda x: x.get('calcTime', 0))
+        last_time = sorted_data[-1]['calcTime']
+        next_time = datetime.fromtimestamp(last_time / 1000) + timedelta(hours=interval_hours)
+        return next_time.strftime('%Y-%m-%d %H:%M UTC')
 
+    async def collect_all_symbols(self, min_volume_usd: float = 500000, min_trade_count_24h: int = 100) -> Dict[str, Any]:
+        print(f"\n{'='*60}")
+        print(f"Начинаем сбор данных для {len(self.symbols)} символов (Aster DEX)")
+        print(f"Фильтры: объём за 24ч > ${min_volume_usd:,.0f}, сделок за 24ч > {min_trade_count_24h}")
+        print(f"{'='*60}\n")
 
-def get_next_funding_time(funding_data):
-    """Определяет время следующей выплаты фандинга"""
-    if not funding_data:
-        return None
-    
-    interval_hours = detect_funding_interval(funding_data)
-    if not interval_hours:
-        return None
-    
-    sorted_data = sorted(funding_data, key=lambda x: x.get('calcTime', 0))
-    last_time = sorted_data[-1]['calcTime']
-    last_time_dt = datetime.fromtimestamp(last_time / 1000)
-    
-    next_time = last_time_dt + timedelta(hours=interval_hours)
-    
-    return next_time.strftime('%Y-%m-%d %H:%M UTC')
+        async with aiohttp.ClientSession() as session:
+            print("📡 Получаем 24-часовую статистику для всех символов...")
+            tickers_map = await self.fetch_all_tickers(session)
+            if not tickers_map:
+                print("❌ Не удалось получить статистику. Работа невозможна.")
+                return {}
 
+            print("📡 Загружаем историю фандинга для всех символов (параллельно)...")
+            tasks = [self.get_funding_history(session, sym) for sym in self.symbols]
+            funding_results = await asyncio.gather(*tasks)
 
-def format_symbol_for_output(symbol: str) -> str:
-    """
-    Форматирует символ в формат "BASETOKEN/QUOTETOKEN:QUOTETOKEN"
-    Например: BTCUSDT -> BTC/USDT:USDT
-    """
-    if symbol.endswith('USDT'):
-        base = symbol[:-4]  # Убираем USDT
-        return f"{base}/USDT:USDT"
-    return symbol
+        results = {}
+        main_data = {}
+        all_data = []
+        passed_count = 0
+        filtered_count = 0
+        error_count = 0
 
+        for funding_res in funding_results:
+            symbol = funding_res["symbol"]
+            if not funding_res["success"]:
+                results[symbol] = {"status": "failed", "error": funding_res["error"]}
+                error_count += 1
+                continue
 
-def process_aster_funding(all_data):
-    """
-    Обрабатывает все данные по фандингу Aster
-    Возвращает словарь в формате:
-    {
-        "SYMBOL/USDT:USDT": {
-            "24h": 0.03,
-            "48h": 0.06,
-            "168h": 0.21,
-            "720h": 1.177439,
-            "currentFR": 0.01,
-            "fundingIntervalHours": 8,
-            "nextFundingTime": null,
-            "askTotalVolume": 65950.0,
-            "bidTotalVolume": 37290.0
+            ticker = tickers_map.get(symbol)
+            if not ticker:
+                results[symbol] = {"status": "failed", "error": "no ticker data"}
+                error_count += 1
+                continue
+
+            quote_volume = float(ticker.get('quoteVolume', 0))
+            trade_count_24h = int(ticker.get('count', 0))
+
+            if quote_volume < min_volume_usd or trade_count_24h < min_trade_count_24h:
+                results[symbol] = {"status": "filtered", "volume": quote_volume, "trades": trade_count_24h}
+                filtered_count += 1
+                continue
+
+            funding_history = funding_res.get("data", [])
+            if not funding_history:
+                results[symbol] = {"status": "failed", "error": "no funding history"}
+                error_count += 1
+                continue
+
+            passed_count += 1
+
+            now = datetime.now()
+            timestamps = {
+                "24h": int((now - timedelta(hours=24)).timestamp() * 1000),
+                "48h": int((now - timedelta(hours=48)).timestamp() * 1000),
+                "168h": int((now - timedelta(hours=168)).timestamp() * 1000),
+                "720h": int((now - timedelta(hours=720)).timestamp() * 1000),
+            }
+            end_time_ms = int(now.timestamp() * 1000)
+
+            total_24h = total_48h = total_168h = total_720h = 0.0
+            for rec in funding_history:
+                ct = rec.get('calcTime')
+                if not ct:
+                    continue
+                try:
+                    raw_rate = float(rec.get('lastFundingRate', '0'))
+                    rate_percent = raw_rate * 100   # перевод в проценты
+                except:
+                    continue
+                if timestamps["24h"] < ct < end_time_ms:
+                    total_24h += rate_percent
+                if timestamps["48h"] < ct < end_time_ms:
+                    total_48h += rate_percent
+                if timestamps["168h"] < ct < end_time_ms:
+                    total_168h += rate_percent
+                if timestamps["720h"] < ct < end_time_ms:
+                    total_720h += rate_percent
+
+            funding_interval_hours = self.detect_funding_interval(funding_history)
+
+            # текущая ставка – БЕЗ умножения на 100
+            current_fr = None
+            if funding_history:
+                latest = sorted(funding_history, key=lambda x: x.get('calcTime', 0), reverse=True)[0]
+                cf = latest.get('lastFundingRate')
+                if cf is not None:
+                    current_fr = round(float(cf), 6)
+
+            next_time = self.get_next_funding_time(funding_history)
+
+            result_entry = {
+                "24h": round(total_24h, 6),
+                "48h": round(total_48h, 6),
+                "168h": round(total_168h, 6),
+                "720h": round(total_720h, 6),
+                "currentFR": current_fr,
+                "fundingIntervalHours": funding_interval_hours,
+                "nextFundingTime": next_time,
+                "volume24hUSD": round(quote_volume, 2),
+                "tradeCountLastHour": 0,
+                "avgTradeSizeUSD": 0.0,
+                "timeSinceLastTradeSeconds": None,
+                "tradesPerHour": 0.0,
+                "total_records": len(funding_history),
+                "priceChangePercent": ticker.get('priceChangePercent'),
+                "highPrice": ticker.get('highPrice'),
+                "lowPrice": ticker.get('lowPrice'),
+                "lastPrice": ticker.get('lastPrice')
+            }
+
+            main_data[symbol] = result_entry
+            all_data.append({
+                "symbol": symbol,
+                "success": True,
+                "data": result_entry,
+                "ticker": ticker
+            })
+            results[symbol] = {
+                "status": "success",
+                "records": len(funding_history),
+                "volume24hUSD": quote_volume,
+                "tradeCount24h": trade_count_24h
+            }
+
+        self.save_results(main_data, all_data, results)
+
+        print(f"\n{'='*60}")
+        print(f"📊 ИТОГОВАЯ СТАТИСТИКА:")
+        print(f"   Всего символов: {len(self.symbols)}")
+        print(f"   ✅ Прошли фильтр: {passed_count}")
+        print(f"   ❌ Отфильтровано (объём/сделки): {filtered_count}")
+        print(f"   ⚠️ Ошибки (нет данных): {error_count}")
+        print(f"{'='*60}")
+
+        return {
+            "total_symbols": len(self.symbols),
+            "passed": passed_count,
+            "filtered": filtered_count,
+            "errors": error_count,
+            "results": results
         }
-    }
-    """
-    now = datetime.now()
-    timestamps = {
-        "24h": int((now - timedelta(hours=24)).timestamp() * 1000),
-        "48h": int((now - timedelta(hours=48)).timestamp() * 1000),
-        "168h": int((now - timedelta(hours=168)).timestamp() * 1000),  # 7 дней
-        "720h": int((now - timedelta(hours=720)).timestamp() * 1000),  # 30 дней
-    }
-    end_time_ms = int(now.timestamp() * 1000)
-    
-    results = {}
-    
-    print(f"\n{'='*60}")
-    print("Обработка данных Aster DEX")
-    print(f"Текущее время: {now.strftime('%Y-%m-%d %H:%M UTC')}")
-    print(f"{'='*60}\n")
-    
-    for idx, symbol_data in enumerate(all_data, 1):
-        if not symbol_data.get('success'):
-            continue
-        
-        original_symbol = symbol_data['symbol']
-        funding_history = symbol_data.get('data', [])
-        
-        if not funding_history:
-            print(f"[{idx}/{len(all_data)}] {original_symbol}: ⚠️ Нет данных за 30 дней")
-            continue
-        
-        # Рассчитываем суммы фандинга по периодам
-        funding_sums = calculate_funding_summary(funding_history, timestamps, end_time_ms)
-        
-        # Получаем текущую ставку
-        current_fr = get_current_funding_rate(funding_history)
-        
-        # Определяем интервал выплат
-        interval = detect_funding_interval(funding_history)
-        
-        # Время следующей выплаты
-        next_time = get_next_funding_time(funding_history)
-        
-        # Форматируем символ для вывода
-        formatted_symbol = format_symbol_for_output(original_symbol)
-        
-        results[formatted_symbol] = {
-            "24h": funding_sums["24h"],
-            "48h": funding_sums["48h"],
-            "168h": funding_sums["168h"],
-            "720h": funding_sums["720h"],
-            "currentFR": current_fr if current_fr is not None else 0,
-            "fundingIntervalHours": interval if interval is not None else 8,
-            "nextFundingTime": next_time,
-            "askTotalVolume": 0,  # TODO: Добавить реальные данные при наличии API стакана
-            "bidTotalVolume": 0   # TODO: Добавить реальные данные при наличии API стакана
-        }
-        
-        print(f"[{idx}/{len(all_data)}] {formatted_symbol}: "
-              f"30д={funding_sums['720h']:.6f} | "
-              f"7д={funding_sums['168h']:.6f} | "
-              f"тек={current_fr:.6f} | "
-              f"инт={interval}ч")
-    
-    return results
+
+    def save_results(self, main_data: Dict, all_data: List[Dict], results: Dict):
+        # основной результат сохраняем прямо в корень self.output_dir
+        funding_file = os.path.join(self.output_dir, "funding_results_aster.json")
+        with open(funding_file, 'w', encoding='utf-8') as f:
+            json.dump(main_data, f, indent=4, ensure_ascii=False)
+
+        # вспомогательные файлы – в подпапку funding_data_aux
+        aux_dir = os.path.join(self.output_dir, "funding_data_aux")
+        os.makedirs(aux_dir, exist_ok=True)
+
+        all_file = os.path.join(aux_dir, "all_funding_data.json")
+        with open(all_file, 'w', encoding='utf-8') as f:
+            json.dump(all_data, f, indent=2, ensure_ascii=False)
+
+        stats_file = os.path.join(aux_dir, "collection_stats.json")
+        with open(stats_file, 'w', encoding='utf-8') as f:
+            json.dump(results, f, indent=2, ensure_ascii=False)
+
+        report_file = os.path.join(aux_dir, "collection_report.txt")
+        with open(report_file, 'w', encoding='utf-8') as f:
+            f.write("="*60 + "\n")
+            f.write("ОТЧЁТ О СБОРЕ ДАННЫХ ASTER DEX\n")
+            f.write("="*60 + "\n\n")
+            f.write(f"Дата: {datetime.now().isoformat()}\n")
+            successful = sum(1 for r in results.values() if r.get("status") == "success")
+            f.write(f"Прошли фильтр: {successful}\n")
+            filtered = sum(1 for r in results.values() if r.get("status") == "filtered")
+            f.write(f"Отфильтровано: {filtered}\n")
+            errors = sum(1 for r in results.values() if r.get("status") == "failed")
+            f.write(f"Ошибки: {errors}\n\n")
+            for sym, r in results.items():
+                if r.get("status") == "success":
+                    f.write(f"✅ {sym}: {r['records']} зап., объём={r['volume24hUSD']:.0f}$, сделок={r['tradeCount24h']}\n")
+                elif r.get("status") == "filtered":
+                    f.write(f"⏭️ {sym}: отфильтрован (объём={r['volume']:.0f}$, сделок={r['trades']})\n")
+                else:
+                    f.write(f"❌ {sym}: {r.get('error', 'unknown')}\n")
+
+        print(f"\n✅ Основной результат сохранён в {funding_file}")
+        print(f"   Вспомогательные файлы в {aux_dir}")
 
 
-def save_results(results):
-    """Сохраняет результаты в JSON файл в нужном формате"""
-    output_file = DATA_DIR / "funding_results_aster.json"
-    
-    with open(output_file, 'w', encoding='utf-8') as f:
-        json.dump(results, f, indent=4, ensure_ascii=False)
-    
-    print(f"\n{'='*60}")
-    print(f"✅ Результаты сохранены в: {output_file}")
-    print(f"📊 Обработано символов: {len(results)}")
-    print(f"{'='*60}")
-    
-    return output_file
+async def main():
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    symbols_path = os.path.join(script_dir, "tradePairsAster.json")
+    output_path = script_dir   # ← сохраняем прямо в папку скрипта
 
-
-def print_top_10(results, period, period_name):
-    """
-    Выводит топ-10 символов по указанному периоду
-    """
-    # Фильтруем символы с данными за период
-    valid_symbols = [(symbol, data[period]) for symbol, data in results.items() 
-                     if data[period] is not None]
-    
-    if not valid_symbols:
-        print(f"\n❌ Нет данных для периода {period_name}")
+    if not os.path.exists(symbols_path):
+        print(f"❌ Файл {symbols_path} не найден!")
         return
-    
-    # Сортируем по убыванию
-    sorted_symbols = sorted(valid_symbols, key=lambda x: x[1], reverse=True)[:10]
-    
-    print(f"\n{'='*60}")
-    print(f"🏆 ТОП-10 ПО НАКОПЛЕННОМУ ФАНДИНГУ ЗА {period_name}")
-    print(f"{'='*60}")
-    print(f"{'Символ':<20} {'Фандинг %':>12} {'Текущий FR':>12} {'Интервал':>10}")
-    print("-"*60)
-    
-    for symbol, funding_sum in sorted_symbols:
-        current_fr = results[symbol].get('currentFR', 0)
-        interval = results[symbol].get('fundingIntervalHours', 'N/A')
-        
-        # Конвертируем в проценты для отображения
-        funding_sum_percent = funding_sum * 100
-        current_fr_percent = current_fr * 100
-        
-        print(f"{symbol:<20} {funding_sum_percent:>11.4f}% {current_fr_percent:>11.6f}% {interval:>10}")
-    
-    # Худшие 5
-    negative_symbols = [(symbol, data[period]) for symbol, data in results.items() 
-                        if data[period] is not None and data[period] < 0]
-    if negative_symbols:
-        worst_symbols = sorted(negative_symbols, key=lambda x: x[1])[:5]
-        print(f"\n📉 ХУДШИЕ 5 ПО {period_name} (ОТРИЦАТЕЛЬНЫЙ ФАНДИНГ):")
-        for symbol, funding_sum in worst_symbols:
-            funding_sum_percent = funding_sum * 100
-            print(f"   {symbol:<20} {funding_sum_percent:>11.4f}%")
 
+    print(f"📁 Файл символов: {symbols_path}")
+    collector = AsterFundingCollector(symbols_file=symbols_path, output_dir=output_path)
 
-def generate_statistics(results):
-    """Генерирует статистику по результатам"""
-    if not results:
-        return
-    
-    print(f"\n{'='*60}")
-    print("📊 ОБЩАЯ СТАТИСТИКА ПО ФАНДИНГУ ASTER DEX")
-    print(f"{'='*60}\n")
-    
-    # Статистика по каждому периоду (в процентах)
-    periods = [
-        ("24h", "24 ЧАСА"),
-        ("48h", "48 ЧАСОВ"),
-        ("168h", "7 ДНЕЙ"),
-        ("720h", "30 ДНЕЙ")
-    ]
-    
-    for period_key, period_name in periods:
-        valid_data = [data[period_key] * 100 for data in results.values() 
-                     if data[period_key] is not None]
-        
-        if valid_data:
-            print(f"📈 {period_name}:")
-            print(f"   Средний: {sum(valid_data)/len(valid_data):.4f}%")
-            print(f"   Максимальный: {max(valid_data):.4f}%")
-            print(f"   Минимальный: {min(valid_data):.4f}%")
-            print(f"   Положительных: {len([v for v in valid_data if v > 0])}/{len(valid_data)}")
-            print(f"   Отрицательных: {len([v for v in valid_data if v < 0])}/{len(valid_data)}")
-            print()
-    
-    # Статистика по интервалам
-    intervals = defaultdict(int)
-    for data in results.values():
-        interval = data['fundingIntervalHours']
-        if interval:
-            intervals[interval] += 1
-    
-    if intervals:
-        print(f"⏰ РАСПРЕДЕЛЕНИЕ ПО ИНТЕРВАЛАМ ФАНДИНГА:")
-        for interval in sorted(intervals.keys()):
-            count = intervals[interval]
-            print(f"   {interval:2} часов: {count:3} символов ({count/len(results)*100:.1f}%)")
-
-
-def main():
-    print("🚀 Запуск анализа фандинга Aster DEX")
-    print(f"📁 Директория данных: {FUNDING_DATA_DIR}")
-    
-    # Загружаем данные
-    all_data = load_all_funding_data()
-    if not all_data:
-        return
-    
-    # Обрабатываем данные
-    results = process_aster_funding(all_data)
-    
-    # Сохраняем результаты в нужном формате
-    output_file = save_results(results)
-    
-    # Выводим топ-10 для разных периодов
-    print_top_10(results, "24h", "24 ЧАСА")
-    print_top_10(results, "168h", "7 ДНЕЙ")
-    print_top_10(results, "720h", "30 ДНЕЙ")
-    
-    # Генерируем общую статистику
-    generate_statistics(results)
-    
-    print(f"\n✨ Готово! Результаты сохранены в {output_file}")
-    print(f"\n📋 Пример записи в файле:")
-    # Показываем первый символ как пример
-    if results:
-        first_symbol = list(results.keys())[0]
-        print(json.dumps({first_symbol: results[first_symbol]}, indent=4, ensure_ascii=False))
+    print("\n🚀 Запуск сбора данных...")
+    stats = await collector.collect_all_symbols(
+        min_volume_usd=500000,
+        min_trade_count_24h=100
+    )
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

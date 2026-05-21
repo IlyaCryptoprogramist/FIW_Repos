@@ -1,5 +1,5 @@
 {
-  "exchange_directories": ["BingX", "Bybite", "Gate", "Htx", "Hyper", "KuCoin", "MexC"],
+  "exchange_directories": ["BingX", "Bybite", "Hyper", "KuCoin", "MexC"],
   "operations": {
     "getSymbols": {
       "file_pattern": "_getSymbols.py",

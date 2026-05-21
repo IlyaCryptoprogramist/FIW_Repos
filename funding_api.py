@@ -10,13 +10,11 @@ CORS(app)
 BASE_DIR = Path(__file__).parent
 
 # Папки с данными и отображаемые названия бирж
-EXCHANGES = ['Aster', 'BingX', 'Bybite', 'Gate', 'Htx', 'Hyper', 'KuCoin', 'MexC']
+EXCHANGES = ['Aster', 'BingX', 'Bybite', 'Hyper', 'KuCoin', 'MexC']
 EXCHANGE_NAMES = {
     'Aster': 'Aster',
     'BingX': 'BingX',
     'Bybite': 'Bybit',
-    'Gate': 'Gate',
-    'Htx': 'HTX',
     'Hyper': 'Hyper',
     'KuCoin': 'KuCoin',
     'MexC': 'MEXC'
