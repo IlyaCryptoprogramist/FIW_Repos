@@ -1,4 +1,4 @@
-# fetch_mexc_funding.py
+# fetch_mexc_funding.py (оптимизированная версия)
 import ccxt.async_support as ccxt
 import asyncio
 import json
@@ -7,42 +7,34 @@ from collections import Counter
 import time
 from pathlib import Path
 
-# Use relative path based on current file location
 DATA_DIR = Path(__file__).parent
 
 mexc = ccxt.mexc({
-    'timeout': 5000,
+    'timeout': 10000,
+    'enableRateLimit': True,      # встроенный рейт-лимит
     'options': {
         'defaultType': 'swap',
     }
 })
 
-semaphore = asyncio.Semaphore(5)
-
-# Глобальный рейт-лимит
-GLOBAL_RATE_LIMIT_MS = mexc.rateLimit * 2
-print(f"Установлен глобальный рейт-лимит: {GLOBAL_RATE_LIMIT_MS} мс")
-
-last_request_time = time.time()
+semaphore = asyncio.Semaphore(20)   # до 20 параллельных задач
 
 
-async def wait_for_rate_limit():
-    global last_request_time
-    elapsed = (time.time() - last_request_time) * 1000
-    if elapsed < GLOBAL_RATE_LIMIT_MS:
-        delay = (GLOBAL_RATE_LIMIT_MS - elapsed) / 1000
-        await asyncio.sleep(delay)
-    last_request_time = time.time()
+async def fetch_all_tickers():
+    """Пытается получить все тикеры одним запросом. Если не поддерживается – возвращает None."""
+    try:
+        tickers = await mexc.fetch_tickers()
+        return {symbol: ticker for symbol, ticker in tickers.items()}
+    except Exception as e:
+        print(f"⚠️ MEXC не поддерживает fetch_tickers (или ошибка): {e}")
+        return None
 
 
 async def analyze_trades_activity(symbol: str, hours_back: int = 1):
-    """
-    Анализирует активность по сделкам за последний час
-    """
+    """Анализирует активность по сделкам за последний час."""
     try:
         since = int((datetime.now() - timedelta(hours=hours_back)).timestamp() * 1000)
         trades = await mexc.fetch_trades(symbol, since=since, limit=1000)
-        
         if not trades:
             return {
                 'total_volume_usd': 0,
@@ -52,15 +44,12 @@ async def analyze_trades_activity(symbol: str, hours_back: int = 1):
                 'trades_per_hour': 0,
                 'is_active': False
             }
-        
-        total_volume_usd = sum(trade['cost'] for trade in trades)
+        total_volume_usd = sum(trade.get('cost', 0) for trade in trades)
         trade_count = len(trades)
         avg_trade_size = total_volume_usd / trade_count if trade_count > 0 else 0
-        
         latest_trade_time = max(trade['timestamp'] for trade in trades)
         time_since_last_trade = (datetime.now().timestamp() * 1000 - latest_trade_time) / 1000
         trades_per_hour = trade_count / hours_back
-        
         return {
             'total_volume_usd': total_volume_usd,
             'trade_count': trade_count,
@@ -69,9 +58,8 @@ async def analyze_trades_activity(symbol: str, hours_back: int = 1):
             'trades_per_hour': trades_per_hour,
             'is_active': True
         }
-        
     except Exception as e:
-        print(f"Ошибка анализа сделок для {symbol}: {e}")
+        print(f"⚠️ Ошибка анализа сделок для {symbol}: {e}")
         return {
             'total_volume_usd': 0,
             'trade_count': 0,
@@ -83,9 +71,7 @@ async def analyze_trades_activity(symbol: str, hours_back: int = 1):
 
 
 async def fetch_ticker_info(symbol: str):
-    """
-    Получает информацию из ticker
-    """
+    """Получает ticker для одного символа (используется, если fetch_all_tickers не работает)."""
     try:
         ticker = await mexc.fetch_ticker(symbol)
         return {
@@ -96,7 +82,7 @@ async def fetch_ticker_info(symbol: str):
             'percentage_24h': ticker.get('percentage', 0)
         }
     except Exception as e:
-        print(f"Ошибка получения ticker для {symbol}: {e}")
+        print(f"⚠️ Ошибка получения ticker для {symbol}: {e}")
         return {
             'volume_24h_usd': 0,
             'high_24h': 0,
@@ -106,102 +92,92 @@ async def fetch_ticker_info(symbol: str):
         }
 
 
-async def fetch_full_funding_history(symbol: str, start_time_ms: int, end_time_ms: int, limit: int = 200):
+async def fetch_full_funding_history(symbol: str, start_time_ms: int, end_time_ms: int, limit: int = 500):
+    """Собирает всю историю фандинга (максимальными порциями)."""
     all_history = []
     current_since = start_time_ms
     max_iterations = 20
-    iteration_count = 0
+    iteration = 0
 
-    while iteration_count < max_iterations:
-        await wait_for_rate_limit()
+    while iteration < max_iterations:
         try:
-            partial_history = await mexc.fetch_funding_rate_history(
+            partial = await mexc.fetch_funding_rate_history(
                 symbol=symbol,
                 since=current_since,
                 limit=limit
             )
-
-            if not partial_history:
+            if not partial:
                 break
-
-            all_history.extend(partial_history)
-            latest_ts = max(entry['timestamp'] for entry in partial_history)
-
+            all_history.extend(partial)
+            latest_ts = max(entry['timestamp'] for entry in partial)
             if latest_ts >= end_time_ms:
                 break
-
             current_since = latest_ts + 1
-            iteration_count += 1
-
+            iteration += 1
         except Exception as e:
-            print(f"Ошибка при частичном запросе истории FR для {symbol}: {e}")
+            print(f"❌ Ошибка при запросе истории FR для {symbol}: {e}")
             break
-
     return all_history
 
 
 async def detect_funding_interval(history):
     if len(history) < 2:
         return None
-
-    history = sorted(history, key=lambda x: x['timestamp'])
-    intervals_ms = []
-    for i in range(1, len(history)):
-        diff = history[i]['timestamp'] - history[i - 1]['timestamp']
-        intervals_ms.append(diff)
-
-    counter = Counter(intervals_ms)
-    most_common_ms, _ = counter.most_common(1)[0]
-    hours = round(most_common_ms / (1000 * 3600))
-    return hours if hours > 0 else None
+    sorted_history = sorted(history, key=lambda x: x['timestamp'])
+    intervals = [sorted_history[i]['timestamp'] - sorted_history[i-1]['timestamp']
+                 for i in range(1, len(sorted_history))]
+    if not intervals:
+        return None
+    counter = Counter(intervals)
+    most_common = counter.most_common(1)[0][0]
+    hours = round(most_common / (1000 * 3600))
+    return hours if 1 <= hours <= 24 else 8
 
 
 async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: dict,
-                         min_volume_24h_usd: float = 500000,
-                         min_trade_count_per_hour: int = 100,
-                         max_time_since_last_trade_seconds: int = 25,
-                         min_avg_trade_size_usd: float = 100):
+                         tickers_map: dict,
+                         min_volume_24h_usd: float,
+                         min_trade_count_per_hour: int,
+                         max_time_since_last_trade_seconds: int,
+                         min_avg_trade_size_usd: float):
     async with semaphore:
         try:
-            await wait_for_rate_limit()
-            
-            # ========== 1. ПОЛУЧАЕМ TICKER ==========
-            ticker_info = await fetch_ticker_info(symbol)
-            volume_24h_usd = ticker_info['volume_24h_usd']
-            
-            # ========== 2. АНАЛИЗИРУЕМ СДЕЛКИ ==========
+            # Объём из тикера
+            if tickers_map is not None:
+                ticker = tickers_map.get(symbol, {})
+                volume_24h_usd = ticker.get('quoteVolume', 0)
+            else:
+                ticker_info = await fetch_ticker_info(symbol)
+                volume_24h_usd = ticker_info['volume_24h_usd']
+
+            # Анализ сделок
             trades_info = await analyze_trades_activity(symbol, hours_back=1)
-            
-            # ========== 3. ПРИМЕНЯЕМ ФИЛЬТРЫ ==========
-            filters_passed = {
+
+            filters = {
                 'min_volume_24h': volume_24h_usd >= min_volume_24h_usd,
                 'min_trade_count': trades_info['trade_count'] >= min_trade_count_per_hour,
-                'recent_trades': trades_info['time_since_last_trade'] is not None and 
+                'recent_trades': trades_info.get('time_since_last_trade') is not None and
                                  trades_info['time_since_last_trade'] <= max_time_since_last_trade_seconds,
                 'min_avg_trade_size': trades_info['avg_trade_size'] >= min_avg_trade_size_usd
             }
-            
-            is_liquid = all(filters_passed.values())
-            
-            # Детальное логирование
+            is_liquid = all(filters.values())
+
             print(f"\n🔍 {symbol}:")
-            print(f"   📊 Объем 24ч: ${volume_24h_usd:,.2f} (нужно >{min_volume_24h_usd:,.0f}$) {'✅' if filters_passed['min_volume_24h'] else '❌'}")
-            print(f"   📈 Сделок/час: {trades_info['trade_count']} (нужно >{min_trade_count_per_hour}) {'✅' if filters_passed['min_trade_count'] else '❌'}")
+            print(f"   📊 Объём 24ч: ${volume_24h_usd:,.2f} (нужно >{min_volume_24h_usd:,.0f}$) {'✅' if filters['min_volume_24h'] else '❌'}")
+            print(f"   📈 Сделок/час: {trades_info['trade_count']} (нужно >{min_trade_count_per_hour}) {'✅' if filters['min_trade_count'] else '❌'}")
             if trades_info['time_since_last_trade']:
-                print(f"   ⏱️ Последняя сделка: {trades_info['time_since_last_trade']:.1f} сек (нужно <{max_time_since_last_trade_seconds} сек) {'✅' if filters_passed['recent_trades'] else '❌'}")
+                print(f"   ⏱️ Посл. сделка: {trades_info['time_since_last_trade']:.1f} сек (нужно <{max_time_since_last_trade_seconds} сек) {'✅' if filters['recent_trades'] else '❌'}")
             else:
-                print(f"   ⏱️ Последняя сделка: НЕТ СДЕЛОК ❌")
-            print(f"   💰 Средний чек: ${trades_info['avg_trade_size']:,.2f} (нужно >{min_avg_trade_size_usd:,.0f}$) {'✅' if filters_passed['min_avg_trade_size'] else '❌'}")
-            
-            # ========== 4. ЕСЛИ НЕ ПРОШЕЛ ФИЛЬТР - ПРОПУСКАЕМ ==========
+                print(f"   ⏱️ Посл. сделка: НЕТ СДЕЛОК ❌")
+            print(f"   💰 Средний чек: ${trades_info['avg_trade_size']:,.2f} (нужно >{min_avg_trade_size_usd:,.0f}$) {'✅' if filters['min_avg_trade_size'] else '❌'}")
+
             if not is_liquid:
-                print(f"   ❌ НЕ ПРОХОДИТ ФИЛЬТР - монета НЕ будет сохранена")
+                print(f"   ❌ НЕ ПРОХОДИТ ФИЛЬТР – монета НЕ будет сохранена")
                 return
-            
-            # ========== 5. ПРОШЕЛ ФИЛЬТР - СОБИРАЕМ ДАННЫЕ ==========
-            print(f"   ✅ ПРОХОДИТ ФИЛЬТР - собираем данные по фандингу")
-            
-            # Текущий funding rate
+
+            print(f"   ✅ ПРОХОДИТ ФИЛЬТР – собираем данные по фандингу")
+
+            # Текущий фандинг
             current_funding = None
             next_funding_time_str = None
             try:
@@ -213,34 +189,24 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                 if current_funding is not None:
                     current_funding *= 100
             except Exception as e:
-                print(f"   Ошибка текущего FR: {e}")
+                print(f"   ⚠️ Ошибка текущего FR: {e}")
 
-            # Сбор истории за 720 часов (30 дней)
+            # История за 30 дней
             start_time_ms_30d = int((now - timedelta(hours=720)).timestamp() * 1000)
             end_time_ms = int(now.timestamp() * 1000)
 
-            await wait_for_rate_limit()
+            full_history = await fetch_full_funding_history(symbol, start_time_ms_30d, end_time_ms, limit=500)
 
-            try:
-                full_funding_history = await fetch_full_funding_history(
-                    symbol=symbol,
-                    start_time_ms=start_time_ms_30d,
-                    end_time_ms=end_time_ms,
-                    limit=200
-                )
-            except Exception as e:
-                print(f"   Ошибка получения истории FR: {e}")
-                full_funding_history = []
+            if not full_history:
+                print(f"   ⚠️ Нет истории фандинга за 30 дней")
+                return
 
-            # Сортировка и фильтрация по периодам
-            full_funding_history.sort(key=lambda x: x['timestamp'])
+            full_history.sort(key=lambda x: x['timestamp'])
 
             total_24h = total_48h = total_168h = total_720h = 0.0
-
-            for entry in full_funding_history:
+            for entry in full_history:
                 ts = entry['timestamp']
                 rate = entry['fundingRate'] * 100
-
                 if timestamps["24h"] < ts < end_time_ms:
                     total_24h += rate
                 if timestamps["48h"] < ts < end_time_ms:
@@ -250,32 +216,31 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                 if timestamps["720h"] < ts < end_time_ms:
                     total_720h += rate
 
-            funding_interval_hours = await detect_funding_interval(full_funding_history)
+            interval_hours = await detect_funding_interval(full_history)
 
-            # Сохраняем только ликвидные монеты
             results[symbol] = {
                 "24h": round(total_24h, 6),
                 "48h": round(total_48h, 6),
                 "168h": round(total_168h, 6),
                 "720h": round(total_720h, 6),
                 "currentFR": round(current_funding, 6) if current_funding is not None else None,
-                "fundingIntervalHours": funding_interval_hours if funding_interval_hours is not None else 8,
+                "fundingIntervalHours": interval_hours if interval_hours is not None else 8,
                 "nextFundingTime": next_funding_time_str,
                 "volume24hUSD": round(volume_24h_usd, 2),
                 "tradeCountLastHour": trades_info['trade_count'],
                 "avgTradeSizeUSD": round(trades_info['avg_trade_size'], 2),
                 "timeSinceLastTradeSeconds": round(trades_info['time_since_last_trade'], 1) if trades_info['time_since_last_trade'] else None,
                 "tradesPerHour": round(trades_info['trades_per_hour'], 2),
-                "total_records": len(full_funding_history)
+                "total_records": len(full_history)
             }
-
-            print(f"   → 30д={total_720h:.4f}%, 7д={total_168h:.4f}%, записей={len(full_funding_history)}")
+            print(f"   → 30д={total_720h:.4f}%, 7д={total_168h:.4f}%, записей={len(full_history)}")
 
         except Exception as e:
             print(f"❌ Ошибка при обработке {symbol} на MEXC: {e}")
 
 
 async def main():
+    start_time = time.time()
     now = datetime.now()
     timestamps = {
         "24h": int((now - timedelta(hours=24)).timestamp() * 1000),
@@ -288,19 +253,18 @@ async def main():
     with open(input_file, "r", encoding="utf-8") as f:
         symbols = json.load(f)
 
-    # ========== НАСТРОЙКИ ФИЛЬТРАЦИИ ==========
     FILTERS = {
-        'min_volume_24h_usd': 500000,              # Минимальный объем за 24ч: 500,000$
-        'min_trade_count_per_hour': 100,           # Минимум сделок за час: 100
-        'max_time_since_last_trade_seconds': 25,   # С последней сделки не более 25 секунд
-        'min_avg_trade_size_usd': 10             # Минимальный средний размер сделки: 100$
+        'min_volume_24h_usd': 500000,
+        'min_trade_count_per_hour': 100,
+        'max_time_since_last_trade_seconds': 25,
+        'min_avg_trade_size_usd': 10
     }
 
     print(f"\n{'='*80}")
     print(f"📊 Начинаем сбор данных для {len(symbols)} символов (MEXC)")
     print(f"{'='*80}")
-    print(f"📌 ЖЕСТКИЕ ФИЛЬТРЫ ЛИКВИДНОСТИ:")
-    print(f"   • Объем торгов за 24ч: > ${FILTERS['min_volume_24h_usd']:,.0f}")
+    print(f"📌 ЖЁСТКИЕ ФИЛЬТРЫ ЛИКВИДНОСТИ:")
+    print(f"   • Объём торгов за 24ч: > ${FILTERS['min_volume_24h_usd']:,.0f}")
     print(f"   • Количество сделок за час: > {FILTERS['min_trade_count_per_hour']}")
     print(f"   • Свежесть последней сделки: < {FILTERS['max_time_since_last_trade_seconds']} секунд")
     print(f"   • Средний размер сделки: > ${FILTERS['min_avg_trade_size_usd']:,.0f}")
@@ -308,13 +272,22 @@ async def main():
     print(f"⚠️ ВНИМАНИЕ: В файл попадут ТОЛЬКО монеты, прошедшие ВСЕ фильтры!")
     print(f"{'='*80}\n")
 
+    # Пытаемся получить все тикеры (если поддерживается)
+    tickers_map = await fetch_all_tickers()
+    if tickers_map is None:
+        print("⚠️ MEXC не поддерживает массовое получение тикеров, будем получать их по одному (медленнее).")
+    else:
+        print(f"📡 Получено {len(tickers_map)} тикеров одним запросом.")
+
     results = {}
-    tasks = [process_symbol(symbol, timestamps, now, results,
-                           FILTERS['min_volume_24h_usd'],
-                           FILTERS['min_trade_count_per_hour'],
-                           FILTERS['max_time_since_last_trade_seconds'],
-                           FILTERS['min_avg_trade_size_usd'])
-             for symbol in symbols]
+    tasks = [
+        process_symbol(symbol, timestamps, now, results, tickers_map,
+                       FILTERS['min_volume_24h_usd'],
+                       FILTERS['min_trade_count_per_hour'],
+                       FILTERS['max_time_since_last_trade_seconds'],
+                       FILTERS['min_avg_trade_size_usd'])
+        for symbol in symbols
+    ]
     await asyncio.gather(*tasks)
 
     output_file = DATA_DIR / "funding_results_mexc.json"
@@ -324,17 +297,19 @@ async def main():
 
         total_checked = len(symbols)
         liquid_count = len(results)
-
+        elapsed = time.time() - start_time
+        minutes = int(elapsed // 60)
+        seconds = int(elapsed % 60)
         print(f"\n{'='*80}")
         print(f"✅ Результаты MEXC сохранены в: {output_file}")
         print(f"📊 ИТОГОВАЯ СТАТИСТИКА:")
         print(f"   Проверено монет: {total_checked}")
         print(f"   Прошли фильтры и сохранены: {liquid_count} ({liquid_count/total_checked*100:.1f}%)")
         print(f"   Отфильтровано (НЕ сохранены): {total_checked - liquid_count} ({(total_checked-liquid_count)/total_checked*100:.1f}%)")
+        print(f"   ⏱️ Время выполнения: {minutes} мин {seconds} сек")
         print(f"{'='*80}")
-
     except Exception as e:
-        print(f"Ошибка сохранения: {e}")
+        print(f"❌ Ошибка сохранения: {e}")
 
     await mexc.close()
 
