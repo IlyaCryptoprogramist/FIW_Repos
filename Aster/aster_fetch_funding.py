@@ -214,7 +214,7 @@ class AsterFundingCollector:
                 latest = sorted(funding_history, key=lambda x: x.get('calcTime', 0), reverse=True)[0]
                 cf = latest.get('lastFundingRate')
                 if cf is not None:
-                    current_fr = round(float(cf), 6)
+                    current_fr = round(float(cf) * 100, 6)
 
             next_time = self.get_next_funding_time(funding_history)
 
