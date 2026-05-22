@@ -1,4 +1,4 @@
-// FundingRateHeatmap.js
+// FundingRateHeatmap.jsx
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -13,7 +13,13 @@ const FundingRateHeatmap = () => {
   const [sortConfig, setSortConfig] = useState({ exchange: null, direction: null });
   const [firstColumnWidth, setFirstColumnWidth] = useState(120);
   const [isResizing, setIsResizing] = useState(false);
-  const [searchTerm, setSearchTerm] = useState(''); // состояние поиска
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedCoin, setSelectedCoin] = useState(null);
+  const [selectedExchange1, setSelectedExchange1] = useState('');
+  const [selectedExchange2, setSelectedExchange2] = useState('');
+  const [comparisonData, setComparisonData] = useState(null);
+  const [loadingCompare, setLoadingCompare] = useState(false);
+  const [compareError, setCompareError] = useState(null);
 
   const startXRef = useRef(0);
   const startWidthRef = useRef(0);
@@ -24,13 +30,21 @@ const FundingRateHeatmap = () => {
     { key: '168h', label: '7 Day', dataKey: '168h' },
     { key: '720h', label: '30 Day', dataKey: '720h' }
   ];
-
   const currentPeriod = periods.find(p => p.key === period) || periods[0];
 
   useEffect(() => {
     fetchFundingData();
   }, []);
 
+  // Сброс выбранных бирж и данных при смене монеты
+  useEffect(() => {
+    setSelectedExchange1('');
+    setSelectedExchange2('');
+    setComparisonData(null);
+    setCompareError(null);
+  }, [selectedCoin]);
+
+  // Изменение ширины столбца
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isResizing) return;
@@ -79,11 +93,9 @@ const FundingRateHeatmap = () => {
   const getValue = (coin, exchange) => {
     const coinData = exchangeData[exchange]?.[coin];
     if (!coinData) return null;
-    const val = coinData[currentPeriod.dataKey];
-    return val !== undefined && val !== null ? val : null;
+    return coinData[currentPeriod.dataKey];
   };
 
-  // Сначала сортируем все монеты (если активна сортировка по бирже)
   const sortedSymbols = useMemo(() => {
     if (!sortConfig.exchange || !sortConfig.direction) return allSymbols;
     const withValues = allSymbols.map(coin => ({ coin, value: getValue(coin, sortConfig.exchange) }));
@@ -96,7 +108,6 @@ const FundingRateHeatmap = () => {
     return withValues.map(item => item.coin);
   }, [sortConfig, allSymbols, period]);
 
-  // Фильтрация по поисковому запросу (регистронезависимая)
   const filteredSymbols = useMemo(() => {
     if (!searchTerm.trim()) return sortedSymbols;
     const lowerTerm = searchTerm.toLowerCase().trim();
@@ -128,23 +139,48 @@ const FundingRateHeatmap = () => {
     return sortConfig.direction === 'desc' ? ' ↓' : ' ↑';
   };
 
-  if (loading) {
-    return (
-      <div className="container mt-5 text-center">
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
-  }
+  const handleCoinIconClick = (coin) => {
+    if (selectedCoin === coin) setSelectedCoin(null);
+    else setSelectedCoin(coin);
+  };
 
-  if (error) {
-    return (
-      <div className="alert alert-danger m-3">
-        Error: {error}
-      </div>
-    );
-  }
+  const closePanel = () => setSelectedCoin(null);
+
+  const availableExchangesForCoin = useMemo(() => {
+    if (!selectedCoin) return [];
+    return exchangeList.filter(ex => exchangeData[ex]?.[selectedCoin]);
+  }, [selectedCoin, exchangeList, exchangeData]);
+
+  const handleCompare = async () => {
+    if (!selectedCoin || !selectedExchange1 || !selectedExchange2) return;
+    setLoadingCompare(true);
+    setCompareError(null);
+    try {
+      const response = await fetch(`${API_BASE_URL}/compare`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          coin: selectedCoin,
+          exchange1: selectedExchange1,
+          exchange2: selectedExchange2
+        })
+      });
+      if (!response.ok) {
+        const errData = await response.json();
+        throw new Error(errData.error || 'Failed to compare');
+      }
+      const result = await response.json();
+      setComparisonData(result);
+    } catch (err) {
+      console.error(err);
+      setCompareError(err.message);
+    } finally {
+      setLoadingCompare(false);
+    }
+  };
+
+  if (loading) return <div className="container mt-5 text-center"><div className="spinner-border" role="status"><span className="visually-hidden">Loading...</span></div></div>;
+  if (error) return <div className="alert alert-danger m-3">Error: {error}</div>;
 
   return (
     <div className="container-fluid mt-4">
@@ -153,10 +189,7 @@ const FundingRateHeatmap = () => {
           <ul className="nav nav-tabs">
             {periods.map(p => (
               <li className="nav-item" key={p.key}>
-                <button
-                  className={`nav-link ${period === p.key ? 'active' : ''}`}
-                  onClick={() => setPeriod(p.key)}
-                >
+                <button className={`nav-link ${period === p.key ? 'active' : ''}`} onClick={() => setPeriod(p.key)}>
                   {p.label}
                 </button>
               </li>
@@ -166,22 +199,8 @@ const FundingRateHeatmap = () => {
         <div className="col-md-6 d-flex justify-content-end">
           <div className="input-group" style={{ maxWidth: '300px' }}>
             <span className="input-group-text">🔍</span>
-            <input
-              type="text"
-              className="form-control"
-              placeholder="Search coin..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            {searchTerm && (
-              <button
-                className="btn btn-outline-secondary"
-                type="button"
-                onClick={() => setSearchTerm('')}
-              >
-                ×
-              </button>
-            )}
+            <input type="text" className="form-control" placeholder="Search coin..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+            {searchTerm && <button className="btn btn-outline-secondary" type="button" onClick={() => setSearchTerm('')}>×</button>}
           </div>
         </div>
       </div>
@@ -190,70 +209,122 @@ const FundingRateHeatmap = () => {
         <table className="table table-bordered table-hover text-center align-middle">
           <thead className="bg-dark text-white">
             <tr>
-              <th
-                style={{ width: `${firstColumnWidth}px`, position: 'relative', backgroundColor: '#212529', color: 'white', borderColor: '#454d55' }}
-              >
+              <th style={{ width: `${firstColumnWidth}px`, position: 'relative', backgroundColor: '#212529', color: 'white', borderColor: '#454d55' }}>
                 Symbol
-                <div
-                  style={{
-                    position: 'absolute',
-                    right: 0,
-                    top: 0,
-                    width: '5px',
-                    height: '100%',
-                    cursor: 'col-resize',
-                    userSelect: 'none',
-                    backgroundColor: 'rgba(255,255,255,0.2)',
-                  }}
-                  onMouseDown={handleResizeStart}
-                />
+                <div style={{ position: 'absolute', right: 0, top: 0, width: '5px', height: '100%', cursor: 'col-resize', userSelect: 'none', backgroundColor: 'rgba(255,255,255,0.2)' }} onMouseDown={handleResizeStart} />
               </th>
               {exchangeList.map(ex => (
-                <th
-                  key={ex}
-                  onClick={() => handleExchangeClick(ex)}
-                  style={{ cursor: 'pointer', backgroundColor: '#212529', color: 'white', borderColor: '#454d55' }}
-                >
-                  {ex}{getSortIcon(ex)}
-                  <br />
-                  <small className="text-white-50">{getCoinCount(ex)} coins</small>
+                <th key={ex} onClick={() => handleExchangeClick(ex)} style={{ cursor: 'pointer', backgroundColor: '#212529', color: 'white', borderColor: '#454d55' }}>
+                  {ex}{getSortIcon(ex)}<br /><small className="text-white-50">{getCoinCount(ex)} coins</small>
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {filteredSymbols.map(coin => (
-              <tr key={coin}>
-                <td className="fw-bold" style={{ width: `${firstColumnWidth}px`, backgroundColor: '#f8f9fa' }}>{coin}</td>
-                {exchangeList.map(ex => {
-                  const value = getValue(coin, ex);
-                  return (
-                    <td
-                      key={`${coin}-${ex}`}
-                      style={{
-                        color: getTextColor(value),
-                        backgroundColor: '#fff',
-                      }}
-                    >
-                      {formatWithPercent(value)}
+              <React.Fragment key={coin}>
+                <tr>
+                  <td className="fw-bold" style={{ width: `${firstColumnWidth}px`, backgroundColor: '#f8f9fa' }}>
+                    {coin}
+                    <button className="btn btn-sm btn-outline-secondary ms-2" onClick={() => handleCoinIconClick(coin)} style={{ padding: '2px 6px', fontSize: '0.7rem' }} title={selectedCoin === coin ? "Hide comparison" : "Compare on two exchanges"}>🔍</button>
+                  </td>
+                  {exchangeList.map(ex => {
+                    const value = getValue(coin, ex);
+                    return <td key={`${coin}-${ex}`} style={{ color: getTextColor(value), backgroundColor: '#fff' }}>{formatWithPercent(value)}</td>;
+                  })}
+                </tr>
+                {selectedCoin === coin && (
+                  <tr>
+                    <td colSpan={exchangeList.length + 1} style={{ padding: '0.75rem', backgroundColor: '#f8f9fa' }}>
+                      <div className="border rounded p-3">
+                        <div className="d-flex justify-content-between align-items-center mb-3">
+                          <h6 className="mb-0">Compare {coin}</h6>
+                          <button className="btn btn-sm btn-secondary" onClick={closePanel}>Hide Statistics</button>
+                        </div>
+                        <div className="row">
+                          <div className="col-md-5">
+                            <select className="form-select" value={selectedExchange1} onChange={(e) => setSelectedExchange1(e.target.value)}>
+                              <option value="">Select first exchange</option>
+                              {availableExchangesForCoin.map(ex => <option key={ex} value={ex}>{ex}</option>)}
+                            </select>
+                          </div>
+                          <div className="col-md-5">
+                            <select className="form-select" value={selectedExchange2} onChange={(e) => setSelectedExchange2(e.target.value)}>
+                              <option value="">Select second exchange</option>
+                              {availableExchangesForCoin.map(ex => <option key={ex} value={ex}>{ex}</option>)}
+                            </select>
+                          </div>
+                          <div className="col-md-2">
+                            <button className="btn btn-primary w-100" onClick={handleCompare} disabled={!selectedExchange1 || !selectedExchange2 || loadingCompare}>
+                              {loadingCompare ? 'Loading...' : 'Compare'}
+                            </button>
+                          </div>
+                        </div>
+                        {compareError && <div className="alert alert-danger mt-3">Error: {compareError}</div>}
+                        {comparisonData && !loadingCompare && (
+                          <div className="mt-4">
+                            <h6>Comparison Results</h6>
+                            <table className="table table-sm table-bordered">
+                              <thead>
+                                <tr><th>Metric</th><th>{comparisonData.exchange1}</th><th>{comparisonData.exchange2}</th></tr>
+                              </thead>
+                              <tbody>
+                                <tr>
+                                  <td>24h Volume (USD)</td>
+                                  <td>{comparisonData.stats.volume24h[comparisonData.exchange1].toLocaleString()}</td>
+                                  <td>{comparisonData.stats.volume24h[comparisonData.exchange2].toLocaleString()}</td>
+                                </tr>
+                                <tr>
+                                  <td>Open Interest (USD)</td>
+                                  <td>{comparisonData.stats.openInterest[comparisonData.exchange1]?.toLocaleString() || '—'}</td>
+                                  <td>{comparisonData.stats.openInterest[comparisonData.exchange2]?.toLocaleString() || '—'}</td>
+                                </tr>
+                                <tr>
+                                  <td>Orderbook Volume (USD)</td>
+                                  <td>{comparisonData.stats.orderbookVolume[comparisonData.exchange1]?.toLocaleString() || '—'}</td>
+                                  <td>{comparisonData.stats.orderbookVolume[comparisonData.exchange2]?.toLocaleString() || '—'}</td>
+                                </tr>
+                                <tr>
+                                  <td>Spread (%)</td>
+                                  <td>{comparisonData.stats.orderbookSpread[comparisonData.exchange1] !== null ? `${comparisonData.stats.orderbookSpread[comparisonData.exchange1]}%` : '—'}</td>
+                                  <td>{comparisonData.stats.orderbookSpread[comparisonData.exchange2] !== null ? `${comparisonData.stats.orderbookSpread[comparisonData.exchange2]}%` : '—'}</td>
+                                </tr>
+                                <tr>
+                                  <td>Funding Rate (%)</td>
+                                  <td>{comparisonData.stats.fundingRate[comparisonData.exchange1]?.toFixed(4)}%</td>
+                                  <td>{comparisonData.stats.fundingRate[comparisonData.exchange2]?.toFixed(4)}%</td>
+                                </tr>
+                                <tr>
+                                  <td>Funding Interval (hours)</td>
+                                  <td>{comparisonData.stats.fundingInterval[comparisonData.exchange1]} h</td>
+                                  <td>{comparisonData.stats.fundingInterval[comparisonData.exchange2]} h</td>
+                                </tr>
+                              </tbody>
+                            </table>
+                            <h6>CoinMarketCap Data</h6>
+                            <table className="table table-sm table-bordered">
+                              <tbody>
+                                <tr><td>Max Supply</td><td colSpan="2">{comparisonData.cmc.maxSupply?.toLocaleString() || '—'}</td></tr>
+                                <tr><td>Circulating Supply</td><td colSpan="2">{comparisonData.cmc.circulatingSupply?.toLocaleString() || '—'}</td></tr>
+                                <tr><td>Holders</td><td colSpan="2">{comparisonData.cmc.holders?.toLocaleString() || '—'}</td></tr>
+                                <tr><td>Top Holders Concentration (%)</td><td colSpan="2">{comparisonData.cmc.topHoldersConcentration !== null ? `${comparisonData.cmc.topHoldersConcentration}%` : '—'}</td></tr>
+                              </tbody>
+                            </table>
+                          </div>
+                        )}
+                      </div>
                     </td>
-                  );
-                })}
-              </tr>
+                  </tr>
+                )}
+              </React.Fragment>
             ))}
             {filteredSymbols.length === 0 && (
-              <tr>
-                <td colSpan={exchangeList.length + 1} className="text-center py-4 text-muted">
-                  No coins found for "{searchTerm}"
-                </td>
-              </tr>
+              <tr><td colSpan={exchangeList.length + 1} className="text-center py-4 text-muted">No coins found for "{searchTerm}"</td></tr>
             )}
           </tbody>
         </table>
       </div>
-      <div className="mt-2 text-muted small">
-        {filteredSymbols.length} / {sortedSymbols.length} coins displayed
-      </div>
+      <div className="mt-2 text-muted small">{filteredSymbols.length} / {sortedSymbols.length} coins displayed</div>
     </div>
   );
 };

@@ -6,6 +6,11 @@ from datetime import datetime, timedelta
 from collections import Counter
 from pathlib import Path
 import time
+import sys
+
+# Добавляем родительскую директорию в путь, чтобы импортировать common.db
+sys.path.append(str(Path(__file__).parent.parent))
+from common.db import init_db, get_last_timestamp, save_funding_rates, get_history
 
 DATA_DIR = Path(__file__).parent
 
@@ -17,11 +22,11 @@ bybit = ccxt.bybit({
     }
 })
 
-semaphore = asyncio.Semaphore(20)   # до 20 параллельных задач
+semaphore = asyncio.Semaphore(20)
+EXCHANGE_NAME = 'Bybit'
 
 
 async def fetch_all_tickers():
-    """Получает все тикеры одним запросом."""
     try:
         tickers = await bybit.fetch_tickers()
         return {symbol: ticker for symbol, ticker in tickers.items()}
@@ -31,7 +36,6 @@ async def fetch_all_tickers():
 
 
 async def analyze_trades_activity(symbol: str, hours_back: int = 1):
-    """Анализирует активность по сделкам за последний час."""
     try:
         since = int((datetime.now() - timedelta(hours=hours_back)).timestamp() * 1000)
         trades = await bybit.fetch_trades(symbol, since=since, limit=1000)
@@ -70,8 +74,8 @@ async def analyze_trades_activity(symbol: str, hours_back: int = 1):
         }
 
 
-async def fetch_full_funding_history(symbol: str, start_time_ms: int, end_time_ms: int, limit: int = 1000):
-    """Собирает всю историю фандинга (максимальными порциями)."""
+async def fetch_new_funding_history(symbol: str, start_time_ms: int, end_time_ms: int, limit: int = 1000):
+    """Запрашивает историю фандинга за указанный интервал (новые записи)."""
     all_history = []
     current_since = start_time_ms
     max_iterations = 20
@@ -86,8 +90,11 @@ async def fetch_full_funding_history(symbol: str, start_time_ms: int, end_time_m
             )
             if not partial:
                 break
+            partial = [p for p in partial if p['timestamp'] <= end_time_ms]
+            if not partial:
+                break
             all_history.extend(partial)
-            latest_ts = max(entry['timestamp'] for entry in partial)
+            latest_ts = max(p['timestamp'] for p in partial)
             if latest_ts >= end_time_ms:
                 break
             current_since = latest_ts + 1
@@ -99,7 +106,6 @@ async def fetch_full_funding_history(symbol: str, start_time_ms: int, end_time_m
 
 
 async def detect_funding_interval(history):
-    """Определяет интервал выплат в часах."""
     if len(history) < 2:
         return None
     sorted_history = sorted(history, key=lambda x: x['timestamp'])
@@ -121,14 +127,11 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                          min_avg_trade_size_usd: float):
     async with semaphore:
         try:
-            # 1. Объём из предзагруженных тикеров
             ticker = tickers_map.get(symbol, {})
             volume_24h_usd = ticker.get('quoteVolume', 0)
 
-            # 2. Анализ сделок
             trades_info = await analyze_trades_activity(symbol, hours_back=1)
 
-            # 3. Проверка фильтров
             filters = {
                 'min_volume_24h': volume_24h_usd >= min_volume_24h_usd,
                 'min_trade_count': trades_info['trade_count'] >= min_trade_count_per_hour,
@@ -138,7 +141,6 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
             }
             is_liquid = all(filters.values())
 
-            # Краткое логирование
             print(f"\n🔍 {symbol}:")
             print(f"   📊 Объём 24ч: ${volume_24h_usd:,.2f} (нужно >{min_volume_24h_usd:,.0f}$) {'✅' if filters['min_volume_24h'] else '❌'}")
             print(f"   📈 Сделок/час: {trades_info['trade_count']} (нужно >{min_trade_count_per_hour}) {'✅' if filters['min_trade_count'] else '❌'}")
@@ -154,7 +156,6 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
 
             print(f"   ✅ ПРОХОДИТ ФИЛЬТР – собираем данные по фандингу")
 
-            # Текущий фандинг
             current_funding = None
             next_funding_time_str = None
             try:
@@ -164,26 +165,40 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                 if next_ts:
                     next_funding_time_str = datetime.utcfromtimestamp(next_ts / 1000).strftime('%Y-%m-%d %H:%M UTC')
                 if current_funding is not None:
-                    current_funding *= 100  # в процентах
+                    current_funding *= 100
             except Exception as e:
                 print(f"   ⚠️ Ошибка текущего FR: {e}")
 
-            # История за 30 дней
             start_time_ms_30d = int((now - timedelta(hours=720)).timestamp() * 1000)
             end_time_ms = int(now.timestamp() * 1000)
 
-            full_history = await fetch_full_funding_history(symbol, start_time_ms_30d, end_time_ms, limit=1000)
+            last_ts = await get_last_timestamp(EXCHANGE_NAME, symbol)
+            since = max(last_ts + 1, start_time_ms_30d)
 
+            if since <= end_time_ms:
+                new_records = await fetch_new_funding_history(symbol, since, end_time_ms, limit=1000)
+                if new_records:
+                    to_save = [{'timestamp': r['timestamp'], 'rate': r['fundingRate'], 'interval_hours': None} for r in new_records]
+                    await save_funding_rates(EXCHANGE_NAME, symbol, to_save)
+                    print(f"   💾 Сохранено {len(to_save)} новых записей в БД")
+                else:
+                    print(f"   ℹ️ Новых записей нет")
+            else:
+                print(f"   ℹ️ Последняя запись в БД уже актуальна")
+
+            full_history = await get_history(EXCHANGE_NAME, symbol, start_time_ms_30d, end_time_ms)
             if not full_history:
-                print(f"   ⚠️ Нет истории фандинга за 30 дней")
+                print(f"   ⚠️ Нет истории фандинга за 30 дней в БД")
                 return
 
-            full_history.sort(key=lambda x: x['timestamp'])
+            interval_hours = await detect_funding_interval(full_history)
+            if interval_hours is None:
+                interval_hours = 8
 
             total_24h = total_48h = total_168h = total_720h = 0.0
             for entry in full_history:
                 ts = entry['timestamp']
-                rate = entry['fundingRate'] * 100
+                rate = entry['rate'] * 100
                 if timestamps["24h"] < ts < end_time_ms:
                     total_24h += rate
                 if timestamps["48h"] < ts < end_time_ms:
@@ -193,15 +208,13 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
                 if timestamps["720h"] < ts < end_time_ms:
                     total_720h += rate
 
-            interval_hours = await detect_funding_interval(full_history)
-
             results[symbol] = {
                 "24h": round(total_24h, 6),
                 "48h": round(total_48h, 6),
                 "168h": round(total_168h, 6),
                 "720h": round(total_720h, 6),
                 "currentFR": round(current_funding, 6) if current_funding is not None else None,
-                "fundingIntervalHours": interval_hours if interval_hours is not None else 8,
+                "fundingIntervalHours": interval_hours,
                 "nextFundingTime": next_funding_time_str,
                 "volume24hUSD": round(volume_24h_usd, 2),
                 "tradeCountLastHour": trades_info['trade_count'],
@@ -217,7 +230,8 @@ async def process_symbol(symbol: str, timestamps: dict, now: datetime, results: 
 
 
 async def main():
-    start_time = time.time()   # начало замера
+    start_time = time.time()
+    await init_db()
 
     now = datetime.now()
     timestamps = {
