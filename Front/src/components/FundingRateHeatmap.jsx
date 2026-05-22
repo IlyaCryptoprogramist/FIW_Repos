@@ -1,3 +1,4 @@
+// FundingRateHeatmap.js
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -12,6 +13,8 @@ const FundingRateHeatmap = () => {
   const [sortConfig, setSortConfig] = useState({ exchange: null, direction: null });
   const [firstColumnWidth, setFirstColumnWidth] = useState(120);
   const [isResizing, setIsResizing] = useState(false);
+  const [searchTerm, setSearchTerm] = useState(''); // состояние поиска
+
   const startXRef = useRef(0);
   const startWidthRef = useRef(0);
 
@@ -80,6 +83,7 @@ const FundingRateHeatmap = () => {
     return val !== undefined && val !== null ? val : null;
   };
 
+  // Сначала сортируем все монеты (если активна сортировка по бирже)
   const sortedSymbols = useMemo(() => {
     if (!sortConfig.exchange || !sortConfig.direction) return allSymbols;
     const withValues = allSymbols.map(coin => ({ coin, value: getValue(coin, sortConfig.exchange) }));
@@ -91,6 +95,13 @@ const FundingRateHeatmap = () => {
     });
     return withValues.map(item => item.coin);
   }, [sortConfig, allSymbols, period]);
+
+  // Фильтрация по поисковому запросу (регистронезависимая)
+  const filteredSymbols = useMemo(() => {
+    if (!searchTerm.trim()) return sortedSymbols;
+    const lowerTerm = searchTerm.toLowerCase().trim();
+    return sortedSymbols.filter(coin => coin.toLowerCase().includes(lowerTerm));
+  }, [sortedSymbols, searchTerm]);
 
   const handleExchangeClick = (exchange) => {
     setSortConfig(prev => {
@@ -105,15 +116,12 @@ const FundingRateHeatmap = () => {
     return `${value.toFixed(5)}%`;
   };
 
-  // Новые функции для цветов
   const getTextColor = (value) => {
-    if (value === null || value === undefined) return '#6c757d'; // серый для отсутствующих данных
-    if (value > 0) return '#28a745'; // зелёный для положительных
-    if (value < 0) return '#dc3545'; // красный для отрицательных
-    return '#212529'; // чёрный для нуля
+    if (value === null || value === undefined) return '#6c757d';
+    if (value > 0) return '#28a745';
+    if (value < 0) return '#dc3545';
+    return '#212529';
   };
-
-  const getBackgroundColor = () => '#ffffff'; // всегда белый фон
 
   const getSortIcon = (exchange) => {
     if (sortConfig.exchange !== exchange) return ' ↕️';
@@ -140,24 +148,51 @@ const FundingRateHeatmap = () => {
 
   return (
     <div className="container-fluid mt-4">
-      <ul className="nav nav-tabs mb-3">
-        {periods.map(p => (
-          <li className="nav-item" key={p.key}>
-            <button
-              className={`nav-link ${period === p.key ? 'active' : ''}`}
-              onClick={() => setPeriod(p.key)}
-            >
-              {p.label}
-            </button>
-          </li>
-        ))}
-      </ul>
+      <div className="row mb-3">
+        <div className="col-md-6">
+          <ul className="nav nav-tabs">
+            {periods.map(p => (
+              <li className="nav-item" key={p.key}>
+                <button
+                  className={`nav-link ${period === p.key ? 'active' : ''}`}
+                  onClick={() => setPeriod(p.key)}
+                >
+                  {p.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="col-md-6 d-flex justify-content-end">
+          <div className="input-group" style={{ maxWidth: '300px' }}>
+            <span className="input-group-text">🔍</span>
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search coin..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {searchTerm && (
+              <button
+                className="btn btn-outline-secondary"
+                type="button"
+                onClick={() => setSearchTerm('')}
+              >
+                ×
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
 
       <div className="table-responsive">
         <table className="table table-bordered table-hover text-center align-middle">
-          <thead className="table-dark">
+          <thead className="bg-dark text-white">
             <tr>
-              <th style={{ width: `${firstColumnWidth}px`, position: 'relative' }}>
+              <th
+                style={{ width: `${firstColumnWidth}px`, position: 'relative', backgroundColor: '#212529', color: 'white', borderColor: '#454d55' }}
+              >
                 Symbol
                 <div
                   style={{
@@ -168,6 +203,7 @@ const FundingRateHeatmap = () => {
                     height: '100%',
                     cursor: 'col-resize',
                     userSelect: 'none',
+                    backgroundColor: 'rgba(255,255,255,0.2)',
                   }}
                   onMouseDown={handleResizeStart}
                 />
@@ -176,7 +212,7 @@ const FundingRateHeatmap = () => {
                 <th
                   key={ex}
                   onClick={() => handleExchangeClick(ex)}
-                  style={{ cursor: 'pointer' }}
+                  style={{ cursor: 'pointer', backgroundColor: '#212529', color: 'white', borderColor: '#454d55' }}
                 >
                   {ex}{getSortIcon(ex)}
                   <br />
@@ -186,17 +222,17 @@ const FundingRateHeatmap = () => {
             </tr>
           </thead>
           <tbody>
-            {sortedSymbols.map(coin => (
+            {filteredSymbols.map(coin => (
               <tr key={coin}>
-                <td style={{ width: `${firstColumnWidth}px` }} className="fw-bold">{coin}</td>
+                <td className="fw-bold" style={{ width: `${firstColumnWidth}px`, backgroundColor: '#f8f9fa' }}>{coin}</td>
                 {exchangeList.map(ex => {
                   const value = getValue(coin, ex);
                   return (
                     <td
                       key={`${coin}-${ex}`}
                       style={{
-                        backgroundColor: getBackgroundColor(),
                         color: getTextColor(value),
+                        backgroundColor: '#fff',
                       }}
                     >
                       {formatWithPercent(value)}
@@ -205,8 +241,18 @@ const FundingRateHeatmap = () => {
                 })}
               </tr>
             ))}
+            {filteredSymbols.length === 0 && (
+              <tr>
+                <td colSpan={exchangeList.length + 1} className="text-center py-4 text-muted">
+                  No coins found for "{searchTerm}"
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
+      </div>
+      <div className="mt-2 text-muted small">
+        {filteredSymbols.length} / {sortedSymbols.length} coins displayed
       </div>
     </div>
   );
