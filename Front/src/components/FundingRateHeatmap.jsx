@@ -1,5 +1,5 @@
 // FundingRateHeatmap.jsx
-import React, { useState, useEffect, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const API_BASE_URL = 'http://localhost:5000/api';
@@ -14,6 +14,7 @@ const FundingRateHeatmap = () => {
   const [firstColumnWidth, setFirstColumnWidth] = useState(120);
   const [isResizing, setIsResizing] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [lastUpdate, setLastUpdate] = useState(null);
   const [selectedCoin, setSelectedCoin] = useState(null);
   const [selectedExchange1, setSelectedExchange1] = useState('');
   const [selectedExchange2, setSelectedExchange2] = useState('');
@@ -34,9 +35,11 @@ const FundingRateHeatmap = () => {
 
   useEffect(() => {
     fetchFundingData();
+    fetchLastUpdate();
+    const interval = setInterval(fetchLastUpdate, 10000);
+    return () => clearInterval(interval);
   }, []);
 
-  // Сброс выбранных бирж и данных при смене монеты
   useEffect(() => {
     setSelectedExchange1('');
     setSelectedExchange2('');
@@ -44,7 +47,6 @@ const FundingRateHeatmap = () => {
     setCompareError(null);
   }, [selectedCoin]);
 
-  // Изменение ширины столбца
   useEffect(() => {
     const handleMouseMove = (e) => {
       if (!isResizing) return;
@@ -87,14 +89,24 @@ const FundingRateHeatmap = () => {
     }
   };
 
-  const exchangeList = useMemo(() => Object.keys(exchangeData).sort(), [exchangeData]);
-  const getCoinCount = (exchange) => Object.keys(exchangeData[exchange] || {}).length;
+  const fetchLastUpdate = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/last-update`);
+      const data = await response.json();
+      setLastUpdate(data.lastUpdate);
+    } catch (err) {
+      console.error('Failed to fetch last update time', err);
+    }
+  };
 
-  const getValue = (coin, exchange) => {
+  const exchangeList = useMemo(() => Object.keys(exchangeData).sort(), [exchangeData]);
+  const getCoinCount = useCallback((exchange) => Object.keys(exchangeData[exchange] || {}).length, [exchangeData]);
+
+  const getValue = useCallback((coin, exchange) => {
     const coinData = exchangeData[exchange]?.[coin];
     if (!coinData) return null;
     return coinData[currentPeriod.dataKey];
-  };
+  }, [exchangeData, currentPeriod.dataKey]);
 
   const sortedSymbols = useMemo(() => {
     if (!sortConfig.exchange || !sortConfig.direction) return allSymbols;
@@ -106,7 +118,7 @@ const FundingRateHeatmap = () => {
       return sortConfig.direction === 'desc' ? a.value - b.value : b.value - a.value;
     });
     return withValues.map(item => item.coin);
-  }, [sortConfig, allSymbols, period]);
+  }, [sortConfig, allSymbols, getValue]);
 
   const filteredSymbols = useMemo(() => {
     if (!searchTerm.trim()) return sortedSymbols;
@@ -114,13 +126,13 @@ const FundingRateHeatmap = () => {
     return sortedSymbols.filter(coin => coin.toLowerCase().includes(lowerTerm));
   }, [sortedSymbols, searchTerm]);
 
-  const handleExchangeClick = (exchange) => {
+  const handleExchangeClick = useCallback((exchange) => {
     setSortConfig(prev => {
       if (prev.exchange !== exchange) return { exchange, direction: 'desc' };
       if (prev.direction === 'desc') return { exchange, direction: 'asc' };
       return { exchange: null, direction: null };
     });
-  };
+  }, []);
 
   const formatWithPercent = (value) => {
     if (value === null || value === undefined) return '—';
@@ -199,8 +211,16 @@ const FundingRateHeatmap = () => {
         <div className="col-md-6 d-flex justify-content-end">
           <div className="input-group" style={{ maxWidth: '300px' }}>
             <span className="input-group-text">🔍</span>
-            <input type="text" className="form-control" placeholder="Search coin..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
-            {searchTerm && <button className="btn btn-outline-secondary" type="button" onClick={() => setSearchTerm('')}>×</button>}
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search coin..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {searchTerm && (
+              <button className="btn btn-outline-secondary" type="button" onClick={() => setSearchTerm('')}>×</button>
+            )}
           </div>
         </div>
       </div>
@@ -211,10 +231,26 @@ const FundingRateHeatmap = () => {
             <tr>
               <th style={{ width: `${firstColumnWidth}px`, position: 'relative', backgroundColor: '#212529', color: 'white', borderColor: '#454d55' }}>
                 Symbol
-                <div style={{ position: 'absolute', right: 0, top: 0, width: '5px', height: '100%', cursor: 'col-resize', userSelect: 'none', backgroundColor: 'rgba(255,255,255,0.2)' }} onMouseDown={handleResizeStart} />
+                <div
+                  style={{
+                    position: 'absolute',
+                    right: 0,
+                    top: 0,
+                    width: '5px',
+                    height: '100%',
+                    cursor: 'col-resize',
+                    userSelect: 'none',
+                    backgroundColor: 'rgba(255,255,255,0.2)'
+                  }}
+                  onMouseDown={handleResizeStart}
+                />
               </th>
               {exchangeList.map(ex => (
-                <th key={ex} onClick={() => handleExchangeClick(ex)} style={{ cursor: 'pointer', backgroundColor: '#212529', color: 'white', borderColor: '#454d55' }}>
+                <th
+                  key={ex}
+                  onClick={() => handleExchangeClick(ex)}
+                  style={{ cursor: 'pointer', backgroundColor: '#212529', color: 'white', borderColor: '#454d55' }}
+                >
                   {ex}{getSortIcon(ex)}<br /><small className="text-white-50">{getCoinCount(ex)} coins</small>
                 </th>
               ))}
@@ -226,11 +262,25 @@ const FundingRateHeatmap = () => {
                 <tr>
                   <td className="fw-bold" style={{ width: `${firstColumnWidth}px`, backgroundColor: '#f8f9fa' }}>
                     {coin}
-                    <button className="btn btn-sm btn-outline-secondary ms-2" onClick={() => handleCoinIconClick(coin)} style={{ padding: '2px 6px', fontSize: '0.7rem' }} title={selectedCoin === coin ? "Hide comparison" : "Compare on two exchanges"}>🔍</button>
-                  </td>
+                    <button
+                      className="btn btn-sm btn-outline-secondary ms-2"
+                      onClick={() => handleCoinIconClick(coin)}
+                      style={{ padding: '2px 6px', fontSize: '0.7rem' }}
+                      title={selectedCoin === coin ? "Hide comparison" : "Compare on two exchanges"}
+                    >
+                      🔍
+                    </button>
+                   </td>
                   {exchangeList.map(ex => {
                     const value = getValue(coin, ex);
-                    return <td key={`${coin}-${ex}`} style={{ color: getTextColor(value), backgroundColor: '#fff' }}>{formatWithPercent(value)}</td>;
+                    return (
+                      <td
+                        key={`${coin}-${ex}`}
+                        style={{ color: getTextColor(value), backgroundColor: '#fff' }}
+                      >
+                        {formatWithPercent(value)}
+                      </td>
+                    );
                   })}
                 </tr>
                 {selectedCoin === coin && (
@@ -243,19 +293,31 @@ const FundingRateHeatmap = () => {
                         </div>
                         <div className="row">
                           <div className="col-md-5">
-                            <select className="form-select" value={selectedExchange1} onChange={(e) => setSelectedExchange1(e.target.value)}>
+                            <select
+                              className="form-select"
+                              value={selectedExchange1}
+                              onChange={(e) => setSelectedExchange1(e.target.value)}
+                            >
                               <option value="">Select first exchange</option>
                               {availableExchangesForCoin.map(ex => <option key={ex} value={ex}>{ex}</option>)}
                             </select>
                           </div>
                           <div className="col-md-5">
-                            <select className="form-select" value={selectedExchange2} onChange={(e) => setSelectedExchange2(e.target.value)}>
+                            <select
+                              className="form-select"
+                              value={selectedExchange2}
+                              onChange={(e) => setSelectedExchange2(e.target.value)}
+                            >
                               <option value="">Select second exchange</option>
                               {availableExchangesForCoin.map(ex => <option key={ex} value={ex}>{ex}</option>)}
                             </select>
                           </div>
                           <div className="col-md-2">
-                            <button className="btn btn-primary w-100" onClick={handleCompare} disabled={!selectedExchange1 || !selectedExchange2 || loadingCompare}>
+                            <button
+                              className="btn btn-primary w-100"
+                              onClick={handleCompare}
+                              disabled={!selectedExchange1 || !selectedExchange2 || loadingCompare}
+                            >
                               {loadingCompare ? 'Loading...' : 'Compare'}
                             </button>
                           </div>
@@ -264,52 +326,94 @@ const FundingRateHeatmap = () => {
                         {comparisonData && !loadingCompare && (
                           <div className="mt-4">
                             <h6>Comparison Results</h6>
-                            <table className="table table-sm table-bordered">
-                              <thead>
-                                <tr><th>Metric</th><th>{comparisonData.exchange1}</th><th>{comparisonData.exchange2}</th></tr>
-                              </thead>
-                              <tbody>
-                                <tr>
-                                  <td>24h Volume (USD)</td>
-                                  <td>{comparisonData.stats.volume24h[comparisonData.exchange1].toLocaleString()}</td>
-                                  <td>{comparisonData.stats.volume24h[comparisonData.exchange2].toLocaleString()}</td>
-                                </tr>
-                                <tr>
-                                  <td>Open Interest (USD)</td>
-                                  <td>{comparisonData.stats.openInterest[comparisonData.exchange1]?.toLocaleString() || '—'}</td>
-                                  <td>{comparisonData.stats.openInterest[comparisonData.exchange2]?.toLocaleString() || '—'}</td>
-                                </tr>
-                                <tr>
-                                  <td>Orderbook Volume (USD)</td>
-                                  <td>{comparisonData.stats.orderbookVolume[comparisonData.exchange1]?.toLocaleString() || '—'}</td>
-                                  <td>{comparisonData.stats.orderbookVolume[comparisonData.exchange2]?.toLocaleString() || '—'}</td>
-                                </tr>
-                                <tr>
-                                  <td>Spread (%)</td>
-                                  <td>{comparisonData.stats.orderbookSpread[comparisonData.exchange1] !== null ? `${comparisonData.stats.orderbookSpread[comparisonData.exchange1]}%` : '—'}</td>
-                                  <td>{comparisonData.stats.orderbookSpread[comparisonData.exchange2] !== null ? `${comparisonData.stats.orderbookSpread[comparisonData.exchange2]}%` : '—'}</td>
-                                </tr>
-                                <tr>
-                                  <td>Funding Rate (%)</td>
-                                  <td>{comparisonData.stats.fundingRate[comparisonData.exchange1]?.toFixed(4)}%</td>
-                                  <td>{comparisonData.stats.fundingRate[comparisonData.exchange2]?.toFixed(4)}%</td>
-                                </tr>
-                                <tr>
-                                  <td>Funding Interval (hours)</td>
-                                  <td>{comparisonData.stats.fundingInterval[comparisonData.exchange1]} h</td>
-                                  <td>{comparisonData.stats.fundingInterval[comparisonData.exchange2]} h</td>
-                                </tr>
-                              </tbody>
-                            </table>
-                            <h6>CoinMarketCap Data</h6>
-                            <table className="table table-sm table-bordered">
-                              <tbody>
-                                <tr><td>Max Supply</td><td colSpan="2">{comparisonData.cmc.maxSupply?.toLocaleString() || '—'}</td></tr>
-                                <tr><td>Circulating Supply</td><td colSpan="2">{comparisonData.cmc.circulatingSupply?.toLocaleString() || '—'}</td></tr>
-                                <tr><td>Holders</td><td colSpan="2">{comparisonData.cmc.holders?.toLocaleString() || '—'}</td></tr>
-                                <tr><td>Top Holders Concentration (%)</td><td colSpan="2">{comparisonData.cmc.topHoldersConcentration !== null ? `${comparisonData.cmc.topHoldersConcentration}%` : '—'}</td></tr>
-                              </tbody>
-                            </table>
+                            <div className="table-responsive">
+                              <table className="table table-sm table-bordered text-center align-middle">
+                                <colgroup>
+                                  <col style={{ width: '35%' }} />
+                                  <col style={{ width: '32.5%' }} />
+                                  <col style={{ width: '32.5%' }} />
+                                </colgroup>
+                                <thead className="table-secondary">
+                                  <tr>
+                                    <th>Metric</th>
+                                    <th>{comparisonData.exchange1}</th>
+                                    <th>{comparisonData.exchange2}</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  <tr>
+                                    <td className="text-start fw-bold">24h Volume (USD)</td>
+                                    <td>{comparisonData.stats.volume24h[comparisonData.exchange1].toLocaleString()}</td>
+                                    <td>{comparisonData.stats.volume24h[comparisonData.exchange2].toLocaleString()}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="text-start fw-bold">Open Interest (USD)</td>
+                                    <td>{comparisonData.stats.openInterest[comparisonData.exchange1]?.toLocaleString() || '—'}</td>
+                                    <td>{comparisonData.stats.openInterest[comparisonData.exchange2]?.toLocaleString() || '—'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="text-start fw-bold">Orderbook Volume (USD)</td>
+                                    <td>{comparisonData.stats.orderbookVolume[comparisonData.exchange1]?.toLocaleString() || '—'}</td>
+                                    <td>{comparisonData.stats.orderbookVolume[comparisonData.exchange2]?.toLocaleString() || '—'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="text-start fw-bold">Spread (%)</td>
+                                    <td>{comparisonData.stats.orderbookSpread[comparisonData.exchange1] !== null ? `${comparisonData.stats.orderbookSpread[comparisonData.exchange1]}%` : '—'}</td>
+                                    <td>{comparisonData.stats.orderbookSpread[comparisonData.exchange2] !== null ? `${comparisonData.stats.orderbookSpread[comparisonData.exchange2]}%` : '—'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="text-start fw-bold">Funding Rate (%)</td>
+                                    <td className="fw-semibold">{comparisonData.stats.fundingRate[comparisonData.exchange1]?.toFixed(4)}%</td>
+                                    <td className="fw-semibold">{comparisonData.stats.fundingRate[comparisonData.exchange2]?.toFixed(4)}%</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="text-start fw-bold">Funding Interval (hours)</td>
+                                    <td>{comparisonData.stats.fundingInterval[comparisonData.exchange1]} h</td>
+                                    <td>{comparisonData.stats.fundingInterval[comparisonData.exchange2]} h</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="text-start fw-bold">Current Price (USD)</td>
+                                    <td>{comparisonData.stats.currentPrice?.[comparisonData.exchange1]?.toFixed(4) ?? '—'}</td>
+                                    <td>{comparisonData.stats.currentPrice?.[comparisonData.exchange2]?.toFixed(4) ?? '—'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="text-start fw-bold">Price Spread (%)</td>
+                                    <td colSpan="2" className="text-center">
+                                      {comparisonData.stats.priceSpreadPercent !== null && comparisonData.stats.priceSpreadPercent !== undefined
+                                        ? `${comparisonData.stats.priceSpreadPercent.toFixed(4)}%`
+                                        : '—'}
+                                    </td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
+                            <h6 className="mt-3">CoinMarketCap Data</h6>
+                            <div className="table-responsive">
+                              <table className="table table-sm table-bordered text-center align-middle">
+                                <colgroup>
+                                  <col style={{ width: '35%' }} />
+                                  <col style={{ width: '65%' }} />
+                                </colgroup>
+                                <tbody>
+                                  <tr>
+                                    <td className="text-start fw-bold">Max Supply</td>
+                                    <td>{comparisonData.cmc.maxSupply?.toLocaleString() || '—'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="text-start fw-bold">Circulating Supply</td>
+                                    <td>{comparisonData.cmc.circulatingSupply?.toLocaleString() || '—'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="text-start fw-bold">Holders</td>
+                                    <td>{comparisonData.cmc.holders?.toLocaleString() || '—'}</td>
+                                  </tr>
+                                  <tr>
+                                    <td className="text-start fw-bold">Top Holders Concentration (%)</td>
+                                    <td>{comparisonData.cmc.topHoldersConcentration !== null ? `${comparisonData.cmc.topHoldersConcentration}%` : '—'}</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            </div>
                           </div>
                         )}
                       </div>
@@ -319,12 +423,23 @@ const FundingRateHeatmap = () => {
               </React.Fragment>
             ))}
             {filteredSymbols.length === 0 && (
-              <tr><td colSpan={exchangeList.length + 1} className="text-center py-4 text-muted">No coins found for "{searchTerm}"</td></tr>
+              <tr>
+                <td colSpan={exchangeList.length + 1} className="text-center py-4 text-muted">
+                  No coins found for "{searchTerm}"
+                </td>
+              </tr>
             )}
           </tbody>
         </table>
       </div>
-      <div className="mt-2 text-muted small">{filteredSymbols.length} / {sortedSymbols.length} coins displayed</div>
+      <div className="mt-2 d-flex justify-content-between align-items-center">
+        <div className="text-muted small">
+          {filteredSymbols.length} / {sortedSymbols.length} coins displayed
+        </div>
+        <div className="text-muted small">
+          Last data update: {lastUpdate ? new Date(lastUpdate).toLocaleString() : 'Never'}
+        </div>
+      </div>
     </div>
   );
 };
