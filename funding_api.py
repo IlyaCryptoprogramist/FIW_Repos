@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import json
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
 import subprocess
 import sys
 import threading
@@ -10,14 +10,23 @@ import time
 import ccxt
 import os
 from dotenv import load_dotenv
-load_dotenv()   # загружает переменные из .env
 
-# Импортируем наши модули
-from coinmarketcap_integration import enrich_with_cmc
-from blockchain_integration import get_token_holders
+load_dotenv()
+
+# Импорт модулей (если они есть)
+try:
+    from coinmarketcap_integration import enrich_with_cmc
+except ImportError:
+    def enrich_with_cmc(*args, **kwargs):
+        return {'maxSupply': None, 'circulatingSupply': None, 'holders': None, 'topHoldersConcentration': None}
+try:
+    from blockchain_integration import get_token_holders
+except ImportError:
+    def get_token_holders(*args, **kwargs):
+        return None, None
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 BASE_DIR = Path(__file__).parent
 LAST_UPDATE_FILE = BASE_DIR / "last_update.txt"
@@ -43,7 +52,15 @@ exchange_instances = {
     'Aster': None,
 }
 
-# ---------- Основные функции работы с данными ----------
+EXCHANGE_ID_MAP = {
+    'Bybit': 'bybit',
+    'BingX': 'bingx',
+    'KuCoin': 'kucoinfutures',
+    'MEXC': 'mexc',
+    'Hyper': 'hyperliquid',
+}
+
+# ---------- Функции работы с данными ----------
 def load_funding_results(exchange_folder):
     path = BASE_DIR / exchange_folder / f"funding_results_{exchange_folder.lower()}.json"
     if not path.exists():
@@ -213,7 +230,6 @@ def compare_coin():
     coin_data1 = data1[key1]
     coin_data2 = data2[key2]
 
-    # Orderbook и цены
     vol1, spread1 = get_orderbook_stats(exchange1, key1)
     vol2, spread2 = get_orderbook_stats(exchange2, key2)
     price1 = get_current_price(exchange1, key1)
@@ -225,17 +241,13 @@ def compare_coin():
     oi1 = coin_data1.get('openInterest')
     oi2 = coin_data2.get('openInterest')
 
-    # ----- 1. Получаем данные из CoinMarketCap (maxSupply, circulatingSupply) -----
     cmc_result = enrich_with_cmc(coin, [price1, price2])
-
-    # ----- 2. Получаем данные о держателях из BaseScan -----
     holders_count, holders_concentration = get_token_holders(coin, [price1, price2])
     if holders_count is not None:
         cmc_result['holders'] = holders_count
     if holders_concentration is not None:
         cmc_result['topHoldersConcentration'] = holders_concentration
 
-    # Формирование ответа
     result = {
         'coin': coin,
         'exchange1': exchange1,
@@ -274,6 +286,91 @@ def compare_coin():
         'cmc': cmc_result
     }
     return jsonify(result)
+
+def fetch_all_funding_rates(exchange, symbol, since_ms):
+    all_rates = []
+    current_since = since_ms
+    while True:
+        rates = exchange.fetch_funding_rate_history(symbol, since=current_since, limit=500)
+        if not rates:
+            break
+        all_rates.extend(rates)
+        if len(rates) < 500:
+            break
+        current_since = rates[-1]['timestamp'] + 1
+    return all_rates
+
+@app.route('/api/funding-history', methods=['POST'])
+def funding_history():
+    data = request.get_json()
+    coin = data.get('coin')
+    exchange_name = data.get('exchange')
+    days_back = data.get('daysBack', 7)
+
+    if not coin or not exchange_name:
+        return jsonify({'error': 'Missing parameters'}), 400
+
+    exchange_id = EXCHANGE_ID_MAP.get(exchange_name)
+    if not exchange_id:
+        return jsonify({'error': f'Exchange {exchange_name} is not supported'}), 400
+
+    try:
+        exchange_class = getattr(ccxt, exchange_id)
+        exchange = exchange_class({'enableRateLimit': True})
+    except AttributeError:
+        return jsonify({'error': f'Exchange {exchange_name} not recognized'}), 400
+
+    symbol = f"{coin}/USDT:USDT"
+    since_ms = int((datetime.now() - timedelta(days=days_back)).timestamp() * 1000)
+
+    try:
+        all_rates = fetch_all_funding_rates(exchange, symbol, since_ms)
+        all_rates.sort(key=lambda x: x['timestamp'])
+
+        history = [{
+            'timestamp': r['timestamp'],
+            'fundingRate': r['fundingRate'] * 100
+        } for r in all_rates if r['timestamp'] >= since_ms]
+
+        possible_intervals = [1, 2, 4, 8]
+        def normalize_interval(hours):
+            if hours <= 0:
+                return None
+            return min(possible_intervals, key=lambda x: abs(x - hours))
+
+        interval_changes = []
+        prev_norm = None
+        for i in range(1, len(all_rates)):
+            time_diff_hours = (all_rates[i]['timestamp'] - all_rates[i-1]['timestamp']) / (1000 * 3600)
+            if time_diff_hours < 0.5 or time_diff_hours > 12:
+                continue
+            norm = normalize_interval(time_diff_hours)
+            if norm is None:
+                continue
+            if prev_norm is not None and norm != prev_norm:
+                interval_changes.append({
+                    'timestamp': all_rates[i]['timestamp'],
+                    'oldInterval': prev_norm,
+                    'newInterval': norm
+                })
+            prev_norm = norm
+
+        unique_changes = []
+        last_ts = None
+        for ch in interval_changes:
+            if ch['timestamp'] != last_ts:
+                unique_changes.append(ch)
+                last_ts = ch['timestamp']
+
+        relevant_changes = [ch for ch in unique_changes if ch['timestamp'] >= since_ms]
+
+        return jsonify({
+            'history': history,
+            'intervalChanges': relevant_changes
+        })
+    except Exception as e:
+        print(f"Error in /api/funding-history: {e}")
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/api/last-update', methods=['GET'])
 def last_update():

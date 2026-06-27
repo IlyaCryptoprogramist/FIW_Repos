@@ -1,6 +1,6 @@
-// FundingRateHeatmap.jsx
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import FundingHistoryChart from './FundingHistoryChart';
 
 const API_BASE_URL = 'http://localhost:5000/api';
 
@@ -21,6 +21,7 @@ const FundingRateHeatmap = () => {
   const [comparisonData, setComparisonData] = useState(null);
   const [loadingCompare, setLoadingCompare] = useState(false);
   const [compareError, setCompareError] = useState(null);
+  const [historyDays, setHistoryDays] = useState(7);
 
   const startXRef = useRef(0);
   const startWidthRef = useRef(0);
@@ -323,6 +324,42 @@ const FundingRateHeatmap = () => {
                           </div>
                         </div>
                         {compareError && <div className="alert alert-danger mt-3">Error: {compareError}</div>}
+
+                        {selectedExchange1 && selectedExchange2 && (
+                          <div className="mt-4">
+                            <div className="d-flex justify-content-between align-items-center mb-3">
+                              <h6>Funding Rate History</h6>
+                              <select
+                                className="form-select form-select-sm w-auto"
+                                value={historyDays}
+                                onChange={(e) => setHistoryDays(parseInt(e.target.value))}
+                              >
+                                <option value={7}>7 days</option>
+                                <option value={14}>14 days</option>
+                                <option value={30}>30 days</option>
+                              </select>
+                            </div>
+                            <div className="row">
+                              <div className="col-md-6">
+                                <FundingHistoryChart
+                                  coin={selectedCoin}
+                                  exchange={selectedExchange1}
+                                  days={historyDays}
+                                  lineColor="#1890ff"
+                                />
+                              </div>
+                              <div className="col-md-6">
+                                <FundingHistoryChart
+                                  coin={selectedCoin}
+                                  exchange={selectedExchange2}
+                                  days={historyDays}
+                                  lineColor="#ff7a45"
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
                         {comparisonData && !loadingCompare && (
                           <div className="mt-4">
                             <h6>Comparison Results</h6>
@@ -363,8 +400,8 @@ const FundingRateHeatmap = () => {
                                   </tr>
                                   <tr>
                                     <td className="text-start fw-bold">Funding Rate (%)</td>
-                                    <td className="fw-semibold">{comparisonData.stats.fundingRate[comparisonData.exchange1]?.toFixed(4)}%</td>
-                                    <td className="fw-semibold">{comparisonData.stats.fundingRate[comparisonData.exchange2]?.toFixed(4)}%</td>
+                                    <td>{comparisonData.stats.fundingRate[comparisonData.exchange1]?.toFixed(4)}%</td>
+                                    <td>{comparisonData.stats.fundingRate[comparisonData.exchange2]?.toFixed(4)}%</td>
                                   </tr>
                                   <tr>
                                     <td className="text-start fw-bold">Funding Interval (hours)</td>
